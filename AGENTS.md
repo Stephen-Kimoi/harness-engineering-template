@@ -57,12 +57,16 @@ make check
 - Run `make check` before marking any change as done
 - Keep `CHECKLIST.md` items binary and verifiable — no "consider" or "think about" items
 - Reference the Walking Labs course in every major section heading
-- Ensure `audit.sh . ` exits 0 (100% score) against this template repo
+- Ensure `audit.sh .` exits 0 (all CRITICAL checks pass) against this template repo
+- Update documentation in the same commit as the code or script it describes — no stale docs
+- Each commit must represent one complete, consistent unit of work (code + docs together)
 
 **MUST NOT:**
 - Add marketing language to any file — tone is direct and imperative for a technical audience
 - Add checklist items that cannot be mechanically verified (pass/fail)
 - Leave placeholder commands in the root `Makefile` that exit 1
+- Leave stale or contradicted documentation in the repo — outdated docs are more dangerous than absent docs because the agent executes against them with full confidence
+- Commit a partial operation; each commit must leave `make check` passing
 
 ---
 
@@ -94,6 +98,5 @@ harness-engineering-template/
 │   ├── Makefile
 │   └── docs/decisions/
 │       └── 000-template.md
-└── examples/
-    └── techrift-backend/       Real-world filled-in example (Elixir/Phoenix)
+└── examples/                   Reserved for real-world filled-in examples
 ```

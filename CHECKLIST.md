@@ -20,6 +20,9 @@ Run the automated version: `./audit.sh`
 - [ ] Verification commands are explicitly listed (e.g., `make check`, `npm test`) `[L03]`
 - [ ] Hard constraints are stated: at least one MUST rule and one MUST NOT rule `[L03]`
 - [ ] State files the agent must read at session start are enumerated `[L03]`
+- [ ] Documentation is updated in the same commit as the code change it describes — no documentation drift `[L03]`
+- [ ] No known stale or contradicted documentation exists in the repo — outdated docs are removed or corrected, not left in place `[L03]`
+- [ ] Complex modules have a short `ARCHITECTURE.md` or `CONSTRAINTS.md` co-located in their directory, not only a global doc at the repo root `[L03]`
 
 ### Subsystem 2: Tools `[L04–L05]`
 
@@ -60,6 +63,14 @@ Run the automated version: `./audit.sh`
 
 *The "is it used correctly?" pass. These check agent behavior, not just file presence.*
 
+### Repository as System of Record `[L03]`
+
+- [ ] **Knowledge visibility gap**: the proportion of project knowledge living outside the repo (Slack, Confluence, team members' heads) is below 10% — list implicit knowledge and verify it is documented `[L03]`
+- [ ] **ACID – Atomicity**: each logical operation (feature code + tests + documentation update) lands in one git commit; no partial completions are committed `[L03]`
+- [ ] **ACID – Consistency**: a verifiable "consistent state" predicate exists (`make check` exits 0) and the agent runs it before every commit — inconsistent intermediate states are never persisted `[L03]`
+- [ ] **ACID – Isolation**: concurrent agent sessions operate on separate branches or use separate progress files — no two agents write to the same state file simultaneously `[L03]`
+- [ ] **ACID – Durability**: all cross-session knowledge (decisions, constraints, progress) is written to tracked files before the session ends — nothing important lives only in session memory `[L03]`
+
 ### Session Lifecycle `[L14–L15]`
 
 - [ ] **Clock-in**: At session start, the agent reads `PROGRESS.md` and `feature_list.json` before touching code `[L14]`
@@ -87,9 +98,9 @@ Run the automated version: `./audit.sh`
 
 | Score | Interpretation |
 |-------|---------------|
-| 35–35 | Production-grade harness |
-| 28–34 | Good harness; address gaps before multi-day agent work |
-| 20–27 | Functional but brittle; agent will lose context on longer tasks |
-| < 20  | Harness is insufficient; agent reliability will degrade quickly |
+| 48–48 | Production-grade harness |
+| 38–47 | Good harness; address gaps before multi-day agent work |
+| 26–37 | Functional but brittle; agent will lose context on longer tasks |
+| < 26  | Harness is insufficient; agent reliability will degrade quickly |
 
 Run `./audit.sh` for an automated Level 1 score. Level 2 requires human review.

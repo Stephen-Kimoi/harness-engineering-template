@@ -112,6 +112,10 @@ if [[ "$inst" == "pass" ]]; then
     "$(contains_pattern "$ipath" "(MUST|MUST NOT|must not|must never|constraint|forbidden|never)")"
   check_recommended "State files are enumerated (PROGRESS.md, feature_list)" \
     "$(contains_pattern "$ipath" "(PROGRESS|feature_list|DECISIONS)")"
+  check_recommended "Documentation staleness rule present (update docs with code, no stale docs)" \
+    "$(contains_pattern "$ipath" "(stale|staleness|same commit|doc.*update|update.*doc|outdated)")"
+  check_recommended "Commit atomicity rule present (one logical op per commit)" \
+    "$(contains_pattern "$ipath" "(atomic|one commit|same commit|partial commit|consistent.*commit|commit.*consistent)")"
 else
   fail "[CRITICAL] Cannot check instructions content — file missing"
   CRITICAL_FAIL=$((CRITICAL_FAIL + 2))
@@ -119,6 +123,10 @@ else
   warn "[RECOMMENDED] Cannot check state file references — file missing"
   RECOMMENDED_FAIL=$((RECOMMENDED_FAIL + 2))
 fi
+
+# Proximity principle: at least one module-level doc exists somewhere under src/lib/app
+check_recommended "Module-level doc (ARCHITECTURE.md or CONSTRAINTS.md) co-located with code" \
+  "$(find "$REPO" -not -path '*/.git/*' \( -name 'ARCHITECTURE.md' -o -name 'CONSTRAINTS.md' \) 2>/dev/null | grep -qv "^$REPO/ARCHITECTURE.md\|^$REPO/CONSTRAINTS.md" && echo "pass" || echo "fail")"
 
 # ── Subsystem 2: Tools ─────────────────────────────────────────────────────────
 header "Subsystem 2: Tools"
@@ -184,6 +192,26 @@ check_recommended "Makefile has a 'test' target" \
 
 check_critical "Verification command documented in AGENTS.md or CLAUDE.md" \
   "$(contains_pattern "$(instructions_path 2>/dev/null || echo "AGENTS.md")" "(make check|npm test|mix test|pytest|cargo test|make test|yarn test|verify|verification)")"
+
+# ── L03: Repository as System of Record ───────────────────────────────────────
+header "L03: Repository as System of Record"
+
+ipath_l03="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+_durability="fail"
+if [[ -f "$REPO/PROGRESS.md" ]] && { [[ -f "$REPO/DECISIONS.md" ]] || [[ -d "$REPO/docs/decisions" ]]; }; then
+  _durability="pass"
+fi
+check_recommended "ACID – Durability: cross-session knowledge written to tracked files (PROGRESS + DECISIONS present)" "$_durability"
+
+check_recommended "ACID – Consistency: verifiable consistent-state predicate documented (make check / equivalent)" \
+  "$(contains_pattern "$ipath_l03" "(make check|consistent state|exits 0|all tests pass|verification pipeline)")"
+
+check_recommended "ACID – Atomicity: commit atomicity rule stated in instructions" \
+  "$(contains_pattern "$ipath_l03" "(atomic|one commit|same commit|partial commit|consistent.*commit|commit.*consistent)")"
+
+check_recommended "Knowledge proximity: at least one module-level doc exists alongside code (not only root-level docs)" \
+  "$(find "$REPO" -not -path '*/.git/*' \( -name 'ARCHITECTURE.md' -o -name 'CONSTRAINTS.md' \) 2>/dev/null | grep -qv "^${REPO%/}/ARCHITECTURE.md\|^${REPO%/}/CONSTRAINTS.md" && echo "pass" || echo "fail")"
 
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))

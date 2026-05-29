@@ -80,6 +80,7 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 - Update `PROGRESS.md` at the end of every session
 - Log non-obvious architectural decisions in `DECISIONS.md` before the session ends
 - Read `PROGRESS.md` and `feature_list.json` at the start of every session
+- Update documentation in the same commit as the code change it describes — never leave docs and code out of sync
 - <ADD: project-specific MUST rule>
 
 **MUST NOT:**
@@ -87,6 +88,8 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 - Push directly to `main` — all changes go through a branch and PR
 - Set a feature state to `passing` without a passing `make check` run
 - Leave `IO.inspect`, `console.log`, `debugger`, or `pry` calls in committed code
+- Leave stale or contradicted documentation in the repo — outdated docs are more dangerous than absent docs because the agent executes against them with full confidence
+- Commit a partial operation (code without tests, or code without the corresponding documentation update) — each commit must represent a complete, consistent unit of work
 - <ADD: project-specific MUST NOT rule>
 
 ---
@@ -105,19 +108,28 @@ If `PROGRESS.md` says `_No active long-running tasks._`, ask the user for the cu
 
 ## Project Structure
 
-<!-- FILL IN: High-level directory map. Keep it brief — one line per directory. -->
+<!-- FILL IN: High-level directory map. Keep it brief — one line per directory.
+     Proximity principle (L03): place a short ARCHITECTURE.md or CONSTRAINTS.md
+     next to any module with non-obvious rules. A 50-line file in the right
+     directory is more useful than a 500-line global document. -->
 
 ```
 <project-root>/
-├── <e.g., lib/>            <e.g., Application source code>
-├── <e.g., test/>           <e.g., ExUnit test suite>
-├── <e.g., priv/repo/>      <e.g., Ecto migrations>
-├── <e.g., assets/>         <e.g., JS/CSS source (compiled by esbuild)>
-├── AGENTS.md               This file
-├── PROGRESS.md             Current task progress
-├── DECISIONS.md            Architectural decision log
-└── feature_list.json       Feature state machine
+├── <e.g., lib/>
+│   ├── <e.g., api/>
+│   │   └── ARCHITECTURE.md     <e.g., API layer decisions and constraints>
+│   └── <e.g., db/>
+│       └── CONSTRAINTS.md      <e.g., Database operation rules — what must/must not be done>
+├── <e.g., test/>               <e.g., Test suite>
+├── <e.g., priv/repo/>          <e.g., Migrations — never edit after commit>
+├── AGENTS.md                   This file
+├── PROGRESS.md                 Current task progress
+├── DECISIONS.md                Architectural decision log
+└── feature_list.json           Feature state machine
 ```
+
+<!-- Module-level docs only need to answer: what does this module do, what are its
+     interfaces, and what constraints apply here. Three to ten lines is enough. -->
 
 ---
 
