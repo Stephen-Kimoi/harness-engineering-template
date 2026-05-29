@@ -202,6 +202,29 @@ check_recommended "Makefile has a 'test' target" \
 check_critical "Verification command documented in AGENTS.md or CLAUDE.md" \
   "$(contains_pattern "$(instructions_path 2>/dev/null || echo "AGENTS.md")" "(make check|npm test|mix test|pytest|cargo test|make test|yarn test|verify|verification)")"
 
+# ── L05: Cross-Session Continuity ─────────────────────────────────────────────
+header "L05: Cross-Session Continuity"
+
+ipath_l05="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_critical "PROGRESS.md has a Current State block (commit hash + test status)" \
+  "$(contains_pattern "PROGRESS.md" "(last commit|current state|commit.*hash|test.*pass|passing.*fail)")"
+
+check_recommended "Clock-in routine documented in instructions (read PROGRESS.md then run check)" \
+  "$(contains_pattern "$ipath_l05" "(clock.in|session start|before touching)")"
+
+check_recommended "Clock-out routine documented in instructions (update PROGRESS.md then commit)" \
+  "$(contains_pattern "$ipath_l05" "(clock.out|session end|before closing)")"
+
+check_recommended "Context anxiety / rushed-finish warning present in instructions" \
+  "$(contains_pattern "$ipath_l05" "(context.*anxi|rushed|running low|skip verif|do not rush)")"
+
+check_recommended "Commit message guidance (explain why, not just what) present" \
+  "$(contains_pattern "$ipath_l05" "(commit.*why|why.*commit|explain why|not just what)")"
+
+check_recommended "PROGRESS.md Next Steps section exists with specific actions" \
+  "$(contains_pattern "PROGRESS.md" "(next step|next action)")"
+
 # ── L03: Repository as System of Record ───────────────────────────────────────
 header "L03: Repository as System of Record"
 

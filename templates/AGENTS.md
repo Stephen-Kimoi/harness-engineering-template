@@ -108,15 +108,38 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 
 ---
 
-## State Files — Read at Session Start
+## Session Protocol
 
-Before touching code, read these files in order:
+<!-- L05: Treat agents as engineers whose short-term memory is wiped each session.
+     The clock-in routine gets a new session to executable state in under 3 minutes.
+     The clock-out routine ensures the next session can do the same. -->
 
-1. **`PROGRESS.md`** — current task, completed steps, blockers, next steps
-2. **`feature_list.json`** — which features are `active`, `blocked`, or `not_started`
-3. **`DECISIONS.md`** (or `docs/decisions/`) — why the system is structured the way it is
+### Clock-In (session start — do this before touching any code)
+
+1. Read **`PROGRESS.md` → Current State** block: last commit hash, test status, lint status
+2. Run `make check` to confirm the repo is in a consistent state before you begin
+3. Read **`PROGRESS.md` → Current Tasks** for the active task and next steps
+4. Read **`feature_list.json`** to confirm which features are `active` or `blocked`
+5. Read only the topic docs relevant to today's task (see Topic Documents below)
 
 If `PROGRESS.md` says `_No active long-running tasks._`, ask the user for the current task before proceeding.
+
+### Clock-Out (session end — do this before closing)
+
+1. Run `make check` — must exit 0 before any commit
+2. Update **`PROGRESS.md` → Current State**: commit hash, exact test counts, lint status
+3. Update **`PROGRESS.md` → Current Tasks**: tick completed steps, update In Progress and Known Issues with specific details (file, line, error message), rewrite Next Steps as specific ordered actions
+4. Log any non-obvious decisions made this session in `DECISIONS.md`
+5. Commit all completed work — message must explain **why**, not just what
+
+### Task duration strategy
+
+- **Under 30 minutes**: complete within the session; no handoff artifacts needed
+- **Over 30 minutes or spanning sessions**: maintain `PROGRESS.md`, `DECISIONS.md`, and a session handoff — rebuild cost target is **<3 minutes** for the incoming session
+
+### Context anxiety warning
+
+If you sense the context window running low: do not rush, skip verification, or choose a simpler solution to finish faster. Write a complete clock-out, commit what is clean and passing, and let the next session resume from `PROGRESS.md`. An incomplete but clean handoff is always better than a rushed finish.
 
 ---
 

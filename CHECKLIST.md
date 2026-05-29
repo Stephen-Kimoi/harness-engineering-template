@@ -78,8 +78,17 @@ Run the automated version: `./audit.sh`
 - [ ] **ACID – Isolation**: concurrent agent sessions operate on separate branches or use separate progress files — no two agents write to the same state file simultaneously `[L03]`
 - [ ] **ACID – Durability**: all cross-session knowledge (decisions, constraints, progress) is written to tracked files before the session ends — nothing important lives only in session memory `[L03]`
 
-### Session Lifecycle `[L14–L15]`
+### Session Lifecycle `[L05, L14–L15]`
 
+- [ ] **Clock-in routine is documented** in `AGENTS.md`: read `PROGRESS.md` Current State → run `make check` → read Current Tasks → resume from Next Steps `[L05]`
+- [ ] **Clock-out routine is documented** in `AGENTS.md`: run `make check` → update `PROGRESS.md` Current State (commit hash, exact test counts, lint) → update tasks → log decisions → commit with "why" message `[L05]`
+- [ ] **Rebuild cost**: a new session reaches executable state in under 3 minutes using only the repo — no verbal briefing needed `[L05]`
+- [ ] **Verification status is explicit**: `PROGRESS.md` records exact test counts (`47 passing, 2 failing`) and names any failing tests — not vague (`tests broken`) `[L05]`
+- [ ] **Known issues are specific**: each entry names the failing test, the error, and the file/line — not a vague description `[L05]`
+- [ ] **Next steps are ordered and specific**: each entry names the file, function, or test to act on — "finish feature" is not acceptable `[L05]`
+- [ ] **Commit messages explain why**: not just what changed, but why — design rationale is recorded in git history `[L05]`
+- [ ] **Context anxiety mitigation**: `AGENTS.md` instructs the agent not to rush, skip verification, or simplify when the context window feels full — clock out cleanly instead `[L05]`
+- [ ] **Task duration strategy**: `AGENTS.md` specifies when to use full progress/handoff artifacts (tasks >30 min or spanning sessions) vs. completing in one session `[L05]`
 - [ ] **Clock-in**: At session start, the agent reads `PROGRESS.md` and `feature_list.json` before touching code `[L14]`
 - [ ] **Clock-out**: At session end, the agent updates `PROGRESS.md`, commits a clean state, and leaves no debug artifacts `[L14]`
 - [ ] **Initialization phase**: The first session in a new project produces a Startup Readiness document confirming: environment installs, at least one test passes, next steps are listed `[L15]`
@@ -105,9 +114,9 @@ Run the automated version: `./audit.sh`
 
 | Score | Interpretation |
 |-------|---------------|
-| 55–55 | Production-grade harness |
-| 44–54 | Good harness; address gaps before multi-day agent work |
-| 30–43 | Functional but brittle; agent will lose context on longer tasks |
-| < 30  | Harness is insufficient; agent reliability will degrade quickly |
+| 64–64 | Production-grade harness |
+| 51–63 | Good harness; address gaps before multi-day agent work |
+| 35–50 | Functional but brittle; agent will lose context on longer tasks |
+| < 35  | Harness is insufficient; agent reliability will degrade quickly |
 
 Run `./audit.sh` for an automated Level 1 score. Level 2 requires human review.

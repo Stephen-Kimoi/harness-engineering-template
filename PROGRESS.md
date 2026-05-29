@@ -5,6 +5,15 @@ Update in real time, not at the end of the session.
 
 ---
 
+## Current State
+
+- **Last commit:** `b13a1ae` — feat: L04 gaps — split instruction model, lost-in-middle, topic docs, source annotations
+- **Tests:** audit.sh self-audit passing — 28 / 30 components present, 6 / 6 critical
+- **Lint:** shellcheck clean (no errors)
+- **Build:** no build step — bash/markdown repo
+
+---
+
 ## Current Tasks
 
 ---

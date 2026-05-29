@@ -1,11 +1,26 @@
 # PROGRESS.md
 
-<!-- This file is the agent's memory across context resets.
+<!-- USAGE (L05):
+     This file is the agent's memory across context resets.
+     A new session must reach executable state in under 3 minutes using only this file.
      Update it in real time — not at the end of the session.
-     Write for a cold-start reader: assume no prior context.
+     Write for a cold-start reader with zero prior context.
      If no active long-running tasks, write exactly:
        _No active long-running tasks._
-     Never leave this file empty. -->
+     Never leave this file empty or vague. -->
+
+---
+
+## Current State
+
+<!-- FILL IN: Update this block every time you commit. A new session reads this first.
+     Test status: write exact counts — "47 passing, 2 failing" not "some tests failing".
+     Failing tests: name the specific test, not just "tests are broken". -->
+
+- **Last commit:** `<git rev-parse --short HEAD>` — <one-line commit message>
+- **Tests:** <e.g., `47 passing, 0 failing` — or name the failing ones: `test_empty_page_returns_200 failing`>
+- **Lint / type-check:** <e.g., `mix format clean` / `credo: 2 warnings`>
+- **Build:** <passing / failing>
 
 ---
 
@@ -27,28 +42,29 @@
 **Started:** `YYYY-MM-DD`
 
 **Completed steps:**
-- [ ] <!-- FILL IN: each step that is fully done, verified, and committed -->
-- [ ] <e.g., "Added `page` and `page_size` query params to ArticleController">
-- [ ] <e.g., "Written unit tests for pagination logic — 12 tests passing">
+- [x] <!-- Each step that is fully done, verified, and committed. -->
+- [x] <e.g., "Added `page` and `page_size` query params to ArticleController — commit abc1234">
+- [x] <e.g., "Written unit tests for pagination logic — 12 tests passing">
 
 **In progress:**
-<!-- What is actively being worked on right now? Include file and line if helpful. -->
-- <e.g., "Writing integration test for empty-page response — `test/api/articles_test.exs:87`">
+<!-- Be specific: file and line number where work stopped. -->
+- <e.g., "Writing integration test for empty-page response — `test/api/articles_test.exs:87`, assertion on status code incomplete">
 
-**Blockers:**
-<!-- What is preventing forward progress? None if clear. -->
-- <e.g., "Waiting for design decision on max page_size cap — see DECISIONS.md">
+**Known issues:**
+<!-- Specific, not vague. Name the test, the error, the line. "Tests failing" is not acceptable here. -->
+- <e.g., "`test_empty_page_returns_200` returns 500 — `ArticleController.index/2` does not handle empty result set, line 43">
 - _None_
 
 **Next steps (in order):**
-1. <e.g., "Finish integration test for empty-page response">
+<!-- Specific and ordered. "Finish feature" is not acceptable. Name the file, function, or test. -->
+1. <e.g., "Fix `ArticleController.index/2` at line 43 to return 200 with empty list when no results">
 2. <e.g., "Run `make check` — must exit 0 before marking F03 passing">
-3. <e.g., "Update feature_list.json: set F03 state to `passing`, record commit hash as evidence">
-4. <e.g., "Update this file: mark task complete or begin next feature">
+3. <e.g., "Update `feature_list.json`: set F03 state to `passing`, record commit hash as evidence">
+4. <e.g., "Update this file: mark task complete, update Current State block">
 
 ---
 
-<!-- Completed tasks (keep last 3 for context, archive older ones) -->
+<!-- Completed tasks — keep last 3 for context, archive older ones -->
 
 ## Recently Completed
 
@@ -58,5 +74,6 @@
 ### Task: [Title]
 Completed: YYYY-MM-DD
 Outcome: <one sentence — what shipped and how it was verified>
+Final commit: <hash>
 Features: F01 (passing), F02 (passing)
 -->

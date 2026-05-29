@@ -69,10 +69,23 @@ make check
 
 ---
 
-## State Files — Read at Session Start
+## Session Protocol
 
-1. **`PROGRESS.md`** — current task, completed steps, blockers, next steps
-2. **`feature_list.json`** — which features are `active`, `blocked`, or `not_started`
+### Clock-In (before touching any file)
+1. Read `PROGRESS.md` → Current State block (last commit, test status)
+2. Run `make check` to confirm consistent state
+3. Read `PROGRESS.md` → Current Tasks and Next Steps
+4. Read `feature_list.json` for active/blocked features
+
+### Clock-Out (before closing the session)
+1. Run `make check` — must exit 0
+2. Update `PROGRESS.md` → Current State with new commit hash and test counts
+3. Update Current Tasks: tick completed steps, update Known Issues with specific details, rewrite Next Steps as specific ordered actions
+4. Log any non-obvious decisions in `DECISIONS.md`
+5. Commit — message must explain **why** the change was made, not just what changed
+
+### Context anxiety warning
+If the context window feels full: do not rush, skip verification, or choose a simpler solution to finish faster. Write a complete clock-out, commit what is clean and passing, and let the next session resume from `PROGRESS.md`.
 
 ---
 
