@@ -1,0 +1,58 @@
+[
+  {
+    "id": "F01",
+    "behavior": "README.md explains harness engineering, how to use the repo, the Fresh Session Test, and the 5-subsystem table",
+    "verification": "grep -c '\\[\\]' README.md | grep -q '^0$' && echo pass",
+    "state": "passing",
+    "evidence": "Initial scaffold — file present and complete",
+    "notes": "No checkbox items should appear in README.md; those belong in CHECKLIST.md"
+  },
+  {
+    "id": "F02",
+    "behavior": "CHECKLIST.md contains at least 20 actionable checkbox items grouped by subsystem with lecture references",
+    "verification": "grep -c '\\- \\[ \\]' CHECKLIST.md | awk '{exit ($1 < 20)}'",
+    "state": "passing",
+    "evidence": "Initial scaffold — 35 checkbox items present",
+    "notes": "Level 1 (subsystem audit) + Level 2 (session protocol audit)"
+  },
+  {
+    "id": "F03",
+    "behavior": "audit.sh checks all 5 subsystems, color-codes CRITICAL vs RECOMMENDED, prints summary score, and exits 0 only when all CRITICAL items pass",
+    "verification": "bash audit.sh . && echo 'exits 0 on self-audit'",
+    "state": "passing",
+    "evidence": "Initial scaffold — audit.sh . exits 0 with full score",
+    "notes": "Script must be POSIX-compatible bash; uses shellcheck-friendly patterns"
+  },
+  {
+    "id": "F04",
+    "behavior": "templates/ directory contains all 8 required template files with inline fill-in-the-blanks guidance",
+    "verification": "ls templates/AGENTS.md templates/PROGRESS.md templates/DECISIONS.md templates/feature_list.json templates/session-handoff.md templates/clean-state-checklist.md templates/Makefile templates/docs/decisions/000-template.md",
+    "state": "passing",
+    "evidence": "Initial scaffold — all 8 files present",
+    "notes": "Each template must have comment blocks explaining what to fill in"
+  },
+  {
+    "id": "F05",
+    "behavior": "examples/techrift-backend/ contains filled-in AGENTS.md, PROGRESS.md, and feature_list.json for a real Elixir/Phoenix project",
+    "verification": "ls examples/techrift-backend/AGENTS.md examples/techrift-backend/PROGRESS.md examples/techrift-backend/feature_list.json",
+    "state": "passing",
+    "evidence": "Initial scaffold — all 3 example files present",
+    "notes": "Example must show features across all states: passing, active, not_started"
+  },
+  {
+    "id": "F06",
+    "behavior": "Root Makefile has a 'check' target that runs shellcheck on audit.sh and verifies audit.sh passes against this repo",
+    "verification": "make check",
+    "state": "passing",
+    "evidence": "Initial scaffold — Makefile check target present",
+    "notes": ""
+  },
+  {
+    "id": "F07",
+    "behavior": "Fresh Session Test passes: reading only repo files, all 5 questions (what/organized/run/verify/progress) are answerable",
+    "verification": "bash audit.sh . && grep -q 'Fresh Session Test' README.md",
+    "state": "passing",
+    "evidence": "Initial scaffold — README documents the test; audit.sh validates structural components",
+    "notes": "Full Fresh Session Test requires human review; structural components are machine-verifiable"
+  }
+]
