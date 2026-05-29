@@ -1,0 +1,26 @@
+[
+  {
+    "id": "F01",
+    "behavior": "User can register a new account with email and password; receives a confirmation email",
+    "verification": "make test TEST=test/accounts/registration_test.exs",
+    "state": "passing",
+    "evidence": "abc1234 — all 8 registration tests passing as of 2024-11-10",
+    "notes": "Confirmation email uses Swoosh in dev (mailbox at /dev/mailbox)"
+  },
+  {
+    "id": "F02",
+    "behavior": "Authenticated user can create, read, update, and delete their own articles; cannot modify others'",
+    "verification": "make test TEST=test/api/articles_test.exs",
+    "state": "active",
+    "evidence": "",
+    "notes": "CRUD endpoints complete; authorization policy for other-user articles still in progress"
+  },
+  {
+    "id": "F03",
+    "behavior": "Article listing endpoint supports cursor-based pagination with configurable page size (max 50)",
+    "verification": "make test TEST=test/api/articles_pagination_test.exs",
+    "state": "not_started",
+    "evidence": "",
+    "notes": "Blocked on F02 reaching passing state first; see DECISIONS.md for pagination strategy"
+  }
+]
