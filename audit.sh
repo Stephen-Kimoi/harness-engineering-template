@@ -116,6 +116,15 @@ if [[ "$inst" == "pass" ]]; then
     "$(contains_pattern "$ipath" "(stale|staleness|same commit|doc.*update|update.*doc|outdated)")"
   check_recommended "Commit atomicity rule present (one logical op per commit)" \
     "$(contains_pattern "$ipath" "(atomic|one commit|same commit|partial commit|consistent.*commit|commit.*consistent)")"
+
+  # L04: Split instructions
+  _inst_lines="$(wc -l < "$REPO/$ipath" 2>/dev/null || echo 999)"
+  check_recommended "Entry file is 50–200 lines (router, not encyclopedia) [L04]" \
+    "$([[ $_inst_lines -le 200 ]] && echo "pass" || echo "fail")"
+  check_recommended "Entry file links to topic documents in docs/ [L04]" \
+    "$(contains_pattern "$ipath" "(docs/[a-z])")"
+  check_recommended "Hard constraints section has source/why annotations per rule [L04]" \
+    "$(contains_pattern "$ipath" "(source:|remove when:|why:|added because)")"
 else
   fail "[CRITICAL] Cannot check instructions content — file missing"
   CRITICAL_FAIL=$((CRITICAL_FAIL + 2))

@@ -1,6 +1,14 @@
 # [Project Name] — Agent Instructions
 
-<!-- FILL IN: Replace every placeholder in angle brackets. Remove comment blocks before committing to production. -->
+<!-- ENTRY FILE RULES (L04):
+     - Keep this file to 50–200 lines. It is a ROUTER, not an encyclopedia.
+     - Detailed rules belong in topic documents under docs/ (linked below).
+     - Hard constraints: no more than 15 rules here. Anything beyond 15 → topic doc.
+     - Put the most critical constraints FIRST — LLMs use information at the top
+       and bottom of a file far more reliably than information in the middle.
+     - Each constraint must state WHY it exists (source) so future maintainers
+       know when it can safely be removed.
+     FILL IN: Replace every placeholder in angle brackets. Remove comment blocks before committing. -->
 
 ## Project Overview
 
@@ -73,24 +81,30 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 
 ## Hard Constraints
 
-<!-- FILL IN: Rules the agent must follow unconditionally. Add project-specific rules. -->
+<!-- FILL IN: Non-negotiable rules only. Cap at 15 total (MUST + MUST NOT combined).
+     If you need more than 15, move the excess to a topic doc under docs/.
+     Format: rule — [source: why this rule exists] — [remove when: expiry condition]
+     Put your highest-risk rules FIRST (lost-in-the-middle effect: agents are most
+     reliable about rules at the top and bottom, not the middle). -->
 
 **MUST:**
-- Run `make check` before marking any feature as `passing` in `feature_list.json`
-- Update `PROGRESS.md` at the end of every session
-- Log non-obvious architectural decisions in `DECISIONS.md` before the session ends
-- Read `PROGRESS.md` and `feature_list.json` at the start of every session
-- Update documentation in the same commit as the code change it describes — never leave docs and code out of sync
-- <ADD: project-specific MUST rule>
+- Run `make check` before marking any feature as `passing` in `feature_list.json` — [source: completion requires evidence, not confidence] — [remove when: verification pipeline is CI-enforced and agent cannot bypass]
+- Read `PROGRESS.md` and `feature_list.json` at the start of every session — [source: agents lose context across sessions] — [remove when: never; this is structural]
+- Update `PROGRESS.md` at the end of every session — [source: agents lose context across sessions] — [remove when: never; this is structural]
+- Log non-obvious architectural decisions in `DECISIONS.md` before the session ends — [source: decisions made in session are lost without documentation] — [remove when: never]
+- Update documentation in the same commit as the code change it describes — [source: doc drift causes agent to execute against wrong assumptions] — [remove when: never]
+- <ADD: project-specific MUST rule — [source: ...] — [remove when: ...]>
 
 **MUST NOT:**
-- Modify database schema without a corresponding migration file
-- Push directly to `main` — all changes go through a branch and PR
-- Set a feature state to `passing` without a passing `make check` run
-- Leave `IO.inspect`, `console.log`, `debugger`, or `pry` calls in committed code
-- Leave stale or contradicted documentation in the repo — outdated docs are more dangerous than absent docs because the agent executes against them with full confidence
-- Commit a partial operation (code without tests, or code without the corresponding documentation update) — each commit must represent a complete, consistent unit of work
-- <ADD: project-specific MUST NOT rule>
+- Set a feature state to `passing` without a passing `make check` run — [source: agents self-declare completion prematurely] — [remove when: gated by CI]
+- Push directly to `main` — [source: team policy, protects production] — [remove when: policy changes]
+- Leave `IO.inspect`, `console.log`, `debugger`, or `pry` calls in committed code — [source: debug artifacts break production] — [remove when: linter enforces automatically]
+- Leave stale or contradicted documentation — outdated docs are more dangerous than absent docs — [source: agents execute against stale rules confidently] — [remove when: never]
+- Commit a partial operation (code without tests, or code without docs update) — [source: ACID atomicity; partial commits break consistent state] — [remove when: never]
+- <ADD: project-specific MUST NOT rule — [source: ...] — [remove when: ...]>
+
+<!-- If this section exceeds 15 rules, move the lower-priority items to docs/constraints.md
+     and add a link in the Topic Documents section below. -->
 
 ---
 
@@ -133,10 +147,21 @@ If `PROGRESS.md` says `_No active long-running tasks._`, ask the user for the cu
 
 ---
 
-## Deeper Documentation
+## Topic Documents
 
-<!-- FILL IN: Links to ADRs, runbooks, API docs, deployment guides. -->
+<!-- FILL IN: This section turns the entry file into a router (L04).
+     Format each link as: path — when to read it — what it contains.
+     Agents load these on demand; they do NOT need to read all of them upfront.
+     Each topic doc should be 50–150 lines. -->
 
-- Architecture decisions: `docs/decisions/`
-- <e.g., Deployment runbook: `docs/deploy.md`>
-- <e.g., API reference: `docs/api.md`>
+| Read when… | Document | What it covers |
+|-----------|----------|----------------|
+| Working on API endpoints | [`docs/api-patterns.md`](docs/api-patterns.md) | Request/response conventions, auth patterns, error formats |
+| Working on the database | [`docs/database-rules.md`](docs/database-rules.md) | Query constraints, migration rules, ORM patterns |
+| Writing or running tests | [`docs/testing-standards.md`](docs/testing-standards.md) | Test structure, naming conventions, what must be tested |
+| Deploying or releasing | [`docs/deploy.md`](docs/deploy.md) | Deployment steps, rollback procedure, environment variables |
+| Making architectural decisions | [`docs/decisions/`](docs/decisions/) | ADR log — why the system is structured the way it is |
+| <ADD: domain-specific topic> | `docs/<topic>.md` | <what it covers> |
+
+<!-- Create each doc file only when you have real content for it.
+     A missing link is better than an empty or stale file. -->

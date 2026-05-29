@@ -11,7 +11,7 @@ Run the automated version: `./audit.sh`
 
 *The "does it exist?" pass. Each item is a concrete, verifiable artifact or behavior.*
 
-### Subsystem 1: Instructions `[L01–L03]`
+### Subsystem 1: Instructions `[L01–L04]`
 
 - [ ] `AGENTS.md` or `CLAUDE.md` exists at the repo root `[L01]`
 - [ ] The file answers "what is this system?" within the first 10 lines `[L01]`
@@ -23,6 +23,13 @@ Run the automated version: `./audit.sh`
 - [ ] Documentation is updated in the same commit as the code change it describes — no documentation drift `[L03]`
 - [ ] No known stale or contradicted documentation exists in the repo — outdated docs are removed or corrected, not left in place `[L03]`
 - [ ] Complex modules have a short `ARCHITECTURE.md` or `CONSTRAINTS.md` co-located in their directory, not only a global doc at the repo root `[L03]`
+- [ ] Entry file (`AGENTS.md` / `CLAUDE.md`) is 50–200 lines — it is a router, not an encyclopedia; detailed rules live in topic docs `[L04]`
+- [ ] Hard constraints section contains no more than 15 rules; anything beyond 15 is a signal to split into a topic document `[L04]`
+- [ ] The most critical constraints appear at the top or bottom of the entry file, not buried in the middle (lost-in-the-middle effect) `[L04]`
+- [ ] Detailed subject matter (API patterns, database rules, testing standards, deployment) lives in topic documents under `docs/`, linked from the entry file `[L04]`
+- [ ] Each link in the entry file includes a one-line description and an applicability condition (when the agent should read it) `[L04]`
+- [ ] No contradictory instructions exist — if two rules conflict, one has been removed or superseded with an explanation `[L04]`
+- [ ] Each hard constraint documents why it was added; instructions without a known source are candidates for removal `[L04]`
 
 ### Subsystem 2: Tools `[L04–L05]`
 
@@ -98,9 +105,9 @@ Run the automated version: `./audit.sh`
 
 | Score | Interpretation |
 |-------|---------------|
-| 48–48 | Production-grade harness |
-| 38–47 | Good harness; address gaps before multi-day agent work |
-| 26–37 | Functional but brittle; agent will lose context on longer tasks |
-| < 26  | Harness is insufficient; agent reliability will degrade quickly |
+| 55–55 | Production-grade harness |
+| 44–54 | Good harness; address gaps before multi-day agent work |
+| 30–43 | Functional but brittle; agent will lose context on longer tasks |
+| < 30  | Harness is insufficient; agent reliability will degrade quickly |
 
 Run `./audit.sh` for an automated Level 1 score. Level 2 requires human review.
