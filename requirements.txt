@@ -1,0 +1,3 @@
+# Documentation and template repository — no runtime package dependencies.
+# Tooling requirement: bash >= 5.0 (see .tool-versions)
+# Optional linting: shellcheck (brew install shellcheck / apt install shellcheck)
