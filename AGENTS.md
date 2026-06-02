@@ -89,6 +89,22 @@ If the context window feels full: do not rush, skip verification, or choose a si
 
 ---
 
+## Skills
+
+The `skills/` directory contains structured workflow prompts for common agentic engineering tasks. When the user asks for help with a task below, read the relevant SKILL.md and follow its workflow prompt.
+
+| User need | Skill to use |
+|-----------|-------------|
+| Building a feature end-to-end with an AI agent | `skills/agentic-engineering-workflow/SKILL.md` |
+| Using a package/SDK without hallucinating APIs | `skills/source-code-context/SKILL.md` |
+| Cleaning up code after a feature lands | `skills/code-structure-cleanup/SKILL.md` |
+| Running review-fix loops on a PR | `skills/grep-loop-review-workflow/SKILL.md` |
+| Extracting repeated mechanics into a service layer | `skills/service-layer-architecture/SKILL.md` |
+
+See `skills/README.md` for the full index and skill relationship map.
+
+---
+
 ## Repository Structure
 
 ```
@@ -100,6 +116,13 @@ harness-engineering-template/
 ├── CHECKLIST.md                Master audit checklist
 ├── audit.sh                    Automated harness audit script
 ├── Makefile                    Verification targets
+├── skills/                     Agentic engineering workflow skills
+│   ├── README.md               Index and harness subsystem mapping
+│   ├── agentic-engineering-workflow/SKILL.md
+│   ├── source-code-context/SKILL.md
+│   ├── code-structure-cleanup/SKILL.md
+│   ├── grep-loop-review-workflow/SKILL.md
+│   └── service-layer-architecture/SKILL.md
 ├── templates/                  Drop-in templates for adopters
 │   ├── AGENTS.md
 │   ├── PROGRESS.md
@@ -108,6 +131,7 @@ harness-engineering-template/
 │   ├── session-handoff.md
 │   ├── clean-state-checklist.md
 │   ├── Makefile
+│   ├── skills/                 Same skills collection, drop-in ready
 │   └── docs/decisions/
 │       └── 000-template.md
 └── examples/                   Reserved for real-world filled-in examples

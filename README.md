@@ -54,6 +54,13 @@ If any question requires tribal knowledge, the harness is incomplete.
 ## Repository layout
 
 ```
+skills/                      Agentic engineering workflow skills
+  README.md                  Index and harness subsystem mapping
+  agentic-engineering-workflow/SKILL.md   Full-session agentic workflow
+  source-code-context/SKILL.md            Reference real source, not guessed docs
+  code-structure-cleanup/SKILL.md         Cleanup pass after a feature lands
+  grep-loop-review-workflow/SKILL.md      Review-fix loop until PR is merge-ready
+  service-layer-architecture/SKILL.md     Extract repeated ops into a service layer
 templates/                   Drop-in file templates
   AGENTS.md                  Fill-in-the-blanks instruction file
   PROGRESS.md                Per-task progress tracker
@@ -62,6 +69,7 @@ templates/                   Drop-in file templates
   session-handoff.md         End-of-session handoff document
   clean-state-checklist.md   Pre-commit clean-state verification
   Makefile                   Starter Makefile
+  skills/                    Same skills collection, drop-in ready for adopters
   docs/decisions/
     000-template.md          ADR template
 examples/
