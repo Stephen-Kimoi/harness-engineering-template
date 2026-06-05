@@ -97,6 +97,7 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 
 **MUST NOT:**
 - Set a feature state to `passing` without a passing `make check` run — [source: agents self-declare completion prematurely] — [remove when: gated by CI]
+- Activate a new feature while another is already `active` in `feature_list.json` — run `make vcr` first — [source: L07; WIP=1 keeps VCR at 1.0 and prevents parallel scope drift] — [remove when: never]
 - Push directly to `main` — [source: team policy, protects production] — [remove when: policy changes]
 - Leave `IO.inspect`, `console.log`, `debugger`, or `pry` calls in committed code — [source: debug artifacts break production] — [remove when: linter enforces automatically]
 - Leave stale or contradicted documentation — outdated docs are more dangerous than absent docs — [source: agents execute against stale rules confidently] — [remove when: never]
@@ -120,7 +121,8 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 2. Run `make check` to confirm the repo is in a consistent state before you begin
 3. Read **`PROGRESS.md` → Current Tasks** for the active task and next steps
 4. Read **`feature_list.json`** to confirm which features are `active` or `blocked`
-5. Read only the topic docs relevant to today's task (see Topic Documents below)
+5. If starting a new feature, run `make vcr` — must exit 0 (VCR = 1.0) before activating
+6. Read only the topic docs relevant to today's task (see Topic Documents below)
 
 If `PROGRESS.md` says `_No active long-running tasks._`, ask the user for the current task before proceeding.
 

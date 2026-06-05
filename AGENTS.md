@@ -66,6 +66,7 @@ make check
 - Leave placeholder commands in the root `Makefile` that exit 1 — [source: broken Makefile fails self-audit] — [remove when: never]
 - Leave stale or contradicted documentation — [source: agents execute against stale rules confidently; stale docs are worse than absent docs] — [remove when: never]
 - Commit a partial operation; each commit must leave `make check` passing — [source: ACID atomicity; partial commits break consistent state] — [remove when: never]
+- Activate a new feature (move any feature from `not_started` to `active`) while another feature is already `active` in `feature_list.json` — run `make vcr` first to confirm VCR = 1.0 — [source: L07; concurrent active features cause scope overreach and leave work half-finished] — [remove when: never]
 
 ---
 
@@ -76,6 +77,7 @@ make check
 2. Run `make check` to confirm consistent state
 3. Read `PROGRESS.md` → Current Tasks and Next Steps
 4. Read `feature_list.json` for active/blocked features
+5. If starting a new feature, run `make vcr` — must exit 0 (VCR = 1.0) before activating
 
 ### Clock-Out (before closing the session)
 1. Run `make check` — must exit 0

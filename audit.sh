@@ -245,6 +245,42 @@ check_recommended "ACID – Atomicity: commit atomicity rule stated in instructi
 check_recommended "Knowledge proximity: at least one module-level doc exists alongside code (not only root-level docs)" \
   "$(find "$REPO" -not -path '*/.git/*' \( -name 'ARCHITECTURE.md' -o -name 'CONSTRAINTS.md' \) 2>/dev/null | grep -qv "^${REPO%/}/ARCHITECTURE.md\|^${REPO%/}/CONSTRAINTS.md" && echo "pass" || echo "fail")"
 
+# ── L07: WIP=1 and VCR Enforcement ───────────────────────────────────────────
+header "L07: WIP=1 and VCR Enforcement"
+
+ipath_l07="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_recommended "WIP=1 rule present in instructions (one active feature at a time) [L07]" \
+  "$(contains_pattern "$ipath_l07" "(WIP.?1|one.*active|active.*at.*time|single.*active|only.*one.*active|activate.*new.*feature|new.*feature.*while.*active)")"
+
+check_recommended "make vcr target exists in Makefile [L07]" \
+  "$(makefile_has_target "vcr")"
+
+# Runtime VCR check — compute from feature_list.json
+if [[ "$(any_file_match "feature_list.json" "features.json")" == "pass" ]]; then
+  _vcr_file=""
+  for _f in "$REPO/feature_list.json" "$REPO/features.json"; do
+    [[ -f "$_f" ]] && { _vcr_file="$_f"; break; }
+  done
+  if [[ -n "$_vcr_file" ]]; then
+    _vcr_active=0; _vcr_passing=0
+    if grep -q '"state":[[:space:]]*"active"' "$_vcr_file" 2>/dev/null; then
+      _vcr_active=$(grep -c '"state":[[:space:]]*"active"' "$_vcr_file")
+    fi
+    if grep -q '"state":[[:space:]]*"passing"' "$_vcr_file" 2>/dev/null; then
+      _vcr_passing=$(grep -c '"state":[[:space:]]*"passing"' "$_vcr_file")
+    fi
+    _vcr_activated=$(( _vcr_active + _vcr_passing ))
+    if [[ "$_vcr_activated" -eq 0 ]]; then
+      check_recommended "VCR: no activated features yet (OK to activate first feature) [L07]" "pass"
+    elif [[ "$_vcr_active" -gt 0 ]]; then
+      check_recommended "VCR = $_vcr_passing/$_vcr_activated — $_vcr_active active feature(s) not yet passing (VCR < 1.0) [L07]" "fail"
+    else
+      check_recommended "VCR = $_vcr_passing/$_vcr_activated = 1.0 — all activated features are passing [L07]" "pass"
+    fi
+  fi
+fi
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))
 TOTAL=$((CRITICAL_PASS + CRITICAL_FAIL + RECOMMENDED_PASS + RECOMMENDED_FAIL))

@@ -2,7 +2,7 @@
 # Replace each placeholder command with your project's actual command.
 # All targets should exit non-zero on failure.
 
-.PHONY: setup dev test format lint check clean
+.PHONY: setup dev test format lint check clean vcr
 
 ## setup — install dependencies and initialize the environment/database
 setup:
@@ -59,6 +59,26 @@ check:
 	#   black --check . && flake8 && pytest
 	@echo "Replace this with your check command"
 	@exit 1
+
+## vcr — verify VCR = 1.0: no features in 'active' state (all activated features must be passing)
+## Blocks new task activation when any prior activated feature is not yet passing.
+vcr:
+	@if [ ! -f feature_list.json ]; then echo "feature_list.json not found — skipping VCR check"; exit 0; fi; \
+	 _active=0; _passing=0; \
+	 if grep -q '"state".*"active"' feature_list.json 2>/dev/null; then \
+	   _active=$$(grep -c '"state".*"active"' feature_list.json); \
+	 fi; \
+	 if grep -q '"state".*"passing"' feature_list.json 2>/dev/null; then \
+	   _passing=$$(grep -c '"state".*"passing"' feature_list.json); \
+	 fi; \
+	 _activated=$$((_active + _passing)); \
+	 if [ "$$_activated" -eq 0 ]; then echo "VCR: no activated features yet — OK"; exit 0; fi; \
+	 echo "VCR: $$_passing/$$_activated activated features passing ($$_active active)"; \
+	 if [ "$$_active" -gt 0 ]; then \
+	   echo "FAIL: VCR < 1.0 — $$_active feature(s) active but not passing. Finish and verify the current task before activating a new one."; \
+	   exit 1; \
+	 fi; \
+	 echo "VCR = 1.0 — all activated features are passing"
 
 ## clean — remove build artifacts and compiled output
 clean:

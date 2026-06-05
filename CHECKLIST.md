@@ -99,6 +99,8 @@ Run the automated version: `./audit.sh`
 - [ ] **No skipping states**: A feature does not move from `not_started` directly to `passing` without an `active` period with evidence `[L16]`
 - [ ] **Victory prevention**: Completion is defined by runtime evidence (build + tests + e2e), not agent confidence or code review `[L17]`
 - [ ] **Scope discipline**: The agent does not modify features outside the current active task without explicit authorization `[L17]`
+- [ ] **WIP=1**: Only one feature is in `active` state at any time — the agent must verify no features are `active` before activating a new one `[L07]`
+- [ ] **VCR gate**: A `make vcr` target (or equivalent) computes Verified Completion Rate and exits non-zero when VCR < 1.0, blocking new task activation `[L07]`
 
 ### Continuity and Handoff `[L18–L20]`
 
@@ -114,9 +116,9 @@ Run the automated version: `./audit.sh`
 
 | Score | Interpretation |
 |-------|---------------|
-| 64–64 | Production-grade harness |
-| 51–63 | Good harness; address gaps before multi-day agent work |
-| 35–50 | Functional but brittle; agent will lose context on longer tasks |
-| < 35  | Harness is insufficient; agent reliability will degrade quickly |
+| 66–66 | Production-grade harness |
+| 53–65 | Good harness; address gaps before multi-day agent work |
+| 37–52 | Functional but brittle; agent will lose context on longer tasks |
+| < 37  | Harness is insufficient; agent reliability will degrade quickly |
 
 Run `./audit.sh` for an automated Level 1 score. Level 2 requires human review.
