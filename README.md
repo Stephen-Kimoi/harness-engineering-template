@@ -13,7 +13,7 @@ Click "Use this template" on GitHub. The `templates/` directory contains drop-in
 
 **Option B — Audit an existing repo**
 ```bash
-curl -fsSL https://raw.githubusercontent.com/your-org/harness-engineering-template/main/audit.sh | bash -s -- /path/to/your/repo
+curl -fsSL https://raw.githubusercontent.com/Stephen-Kimoi/harness-engineering-template/main/audit.sh | bash -s -- /path/to/your/repo
 # or, after cloning:
 ./audit.sh /path/to/your/repo
 ```

@@ -28,7 +28,7 @@ No runtime dependencies. No build step.
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-org/harness-engineering-template
+git clone https://github.com/Stephen-Kimoi/harness-engineering-template
 cd harness-engineering-template
 
 # Run the audit against any existing repo
