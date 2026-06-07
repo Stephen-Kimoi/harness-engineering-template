@@ -70,6 +70,28 @@ make check
 
 ---
 
+## Feature List Rules
+
+Feature state is controlled by the harness, not the agent. The agent proposes verification; the harness decides whether the transition is allowed.
+
+| Rule | Detail |
+|------|--------|
+| **File** | `feature_list.json` at repo root |
+| **WIP=1** | Only one feature may be `active` at a time — run `make vcr` before activating a new one |
+| **Pass-state gating** | Never set `state` to `"passing"` directly — run `make verify-feature F=<id>` and let the harness update the state |
+| **Evidence required** | A feature is not passing until `evidence` contains a commit hash and verified date |
+| **Granularity** | One feature = one completable session ("User can add items to cart" ✓; "Implement the cart" ✗; "Create Cart model name field" ✗) |
+| **State machine** | `not_started` → `active` → `passing` (or `blocked`). No skipping states. |
+
+Workflow for completing a feature:
+1. Confirm VCR = 1.0: `make vcr`
+2. Set feature state to `active` in `feature_list.json`, commit
+3. Build and verify: `make check`
+4. Run the gate: `make verify-feature F=<id>` — this runs the verification command and updates state if it passes
+5. Commit the updated `feature_list.json` with the new state and evidence
+
+---
+
 ## Session Protocol
 
 ### Clock-In (before touching any file)
@@ -118,6 +140,8 @@ harness-engineering-template/
 ├── CHECKLIST.md                Master audit checklist
 ├── audit.sh                    Automated harness audit script
 ├── Makefile                    Verification targets
+├── scripts/
+│   └── verify-feature.sh       Harness-controlled feature state transition (L08)
 ├── skills/                     Agentic engineering workflow skills
 │   ├── README.md               Index and harness subsystem mapping
 │   ├── agentic-engineering-workflow/SKILL.md

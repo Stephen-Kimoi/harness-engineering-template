@@ -324,6 +324,45 @@ if [[ "$(any_file_match "feature_list.json" "features.json")" == "pass" ]]; then
   fi
 fi
 
+# ── L08: Feature List as Harness Primitive ────────────────────────────────────
+header "L08: Feature List as Harness Primitive"
+
+ipath_l08="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+# Helper: find first present feature list file
+_fl_path() {
+  for _f in "$REPO/feature_list.json" "$REPO/features.json"; do
+    [[ -f "$_f" ]] && { echo "$_f"; return; }
+  done
+  echo ""
+}
+
+_fl="$(_fl_path)"
+
+check_recommended "feature_list.json entries have an 'evidence' field [L08]" \
+  "$( [[ -n "$_fl" ]] && grep -q '"evidence"' "$_fl" 2>/dev/null && echo "pass" || echo "fail" )" \
+  "Add an 'evidence' field to every entry in feature_list.json. Example: \"evidence\": \"commit abc1234, verified 2026-06-07\"."
+
+check_recommended "verify-feature script present (scripts/verify-feature.sh) [L08]" \
+  "$(any_file_match "scripts/verify-feature.sh")" \
+  "Create scripts/verify-feature.sh — the harness gate that runs a feature's verification command and transitions state to passing. Get the template from: https://github.com/Stephen-Kimoi/harness-engineering-template/blob/main/scripts/verify-feature.sh"
+
+check_recommended "make verify-feature target exists in Makefile [L08]" \
+  "$(makefile_has_target "verify-feature")" \
+  "Add a 'verify-feature:' target to Makefile: 'bash scripts/verify-feature.sh \$(F)'. Usage: make verify-feature F=F02"
+
+check_recommended "Feature List Rules documented in instructions (pass-state gating) [L08]" \
+  "$(contains_pattern "$ipath_l08" "(verify.feature|verification script|don.t.*state|state.*automatically|harness.*updat|pass.state|never.*set.*state.*passing|never.*edit.*state)")" \
+  "Add a Feature List Rules section to $ipath_l08 stating: 'Never set state to passing directly — run make verify-feature F=<id>.'"
+
+check_recommended "Feature granularity rule documented (one session per feature) [L08]" \
+  "$(contains_pattern "$ipath_l08" "(one session|completable.*session|session.*complet|one feature.*session|single session)")" \
+  "Add a granularity rule to $ipath_l08: 'Each feature must be completable in one session. If it spans sessions, split it.'"
+
+check_recommended "State machine documented (not_started → active → passing) [L08]" \
+  "$(contains_pattern "$ipath_l08" "(not_started|state machine|no skipping|active.*passing)")" \
+  "Document the state machine in $ipath_l08: not_started → active → passing. Note that skipping states is not allowed."
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))
 TOTAL=$((CRITICAL_PASS + CRITICAL_FAIL + RECOMMENDED_PASS + RECOMMENDED_FAIL))

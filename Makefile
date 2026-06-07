@@ -1,4 +1,4 @@
-.PHONY: setup dev test check audit lint vcr
+.PHONY: setup dev test check audit lint vcr verify-feature
 
 ## setup — verify bash >= 5 and optionally install shellcheck
 setup:
@@ -23,6 +23,12 @@ lint:
 ## audit — run audit.sh against this template repo (must score 100%)
 audit:
 	@bash audit.sh .
+
+## verify-feature — run a feature's verification command and transition state to passing if it passes
+## Usage: make verify-feature F=F02
+verify-feature:
+	@if [ -z "$(F)" ]; then echo "Usage: make verify-feature F=<feature-id>  (e.g. make verify-feature F=F02)"; exit 1; fi
+	@bash scripts/verify-feature.sh $(F)
 
 ## vcr — verify VCR = 1.0: no features in 'active' state (all activated features must be passing)
 ## Blocks new task activation when any prior activated feature is not yet passing.

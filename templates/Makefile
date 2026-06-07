@@ -2,7 +2,7 @@
 # Replace each placeholder command with your project's actual command.
 # All targets should exit non-zero on failure.
 
-.PHONY: setup dev test format lint check clean vcr
+.PHONY: setup dev test format lint check clean vcr verify-feature
 
 ## setup — install dependencies and initialize the environment/database
 setup:
@@ -59,6 +59,12 @@ check:
 	#   black --check . && flake8 && pytest
 	@echo "Replace this with your check command"
 	@exit 1
+
+## verify-feature — run a feature's verification command and transition state to passing if it passes
+## Usage: make verify-feature F=F02
+verify-feature:
+	@if [ -z "$(F)" ]; then echo "Usage: make verify-feature F=<feature-id>  (e.g. make verify-feature F=F02)"; exit 1; fi
+	@bash scripts/verify-feature.sh $(F)
 
 ## vcr — verify VCR = 1.0: no features in 'active' state (all activated features must be passing)
 ## Blocks new task activation when any prior activated feature is not yet passing.

@@ -7,9 +7,9 @@ Update in real time, not at the end of the session.
 
 ## Current State
 
-- **Last commit:** `b13a1ae` — feat: L04 gaps — split instruction model, lost-in-middle, topic docs, source annotations
-- **Tests:** audit.sh self-audit passing — 28 / 30 components present, 6 / 6 critical
-- **Lint:** shellcheck clean (no errors)
+- **Last commit:** `35d0dbd` — feat: add actionable 'What to fix' recommendations section to audit output
+- **Tests:** audit.sh self-audit passing — 43 / 45 components present, 7 / 7 critical
+- **Lint:** shellcheck not installed locally (clean in CI)
 - **Build:** no build step — bash/markdown repo
 
 ---
@@ -46,14 +46,20 @@ Update in real time, not at the end of the session.
 - [x] Created root `AGENTS.md`, `PROGRESS.md`, `DECISIONS.md`, `feature_list.json`, `Makefile`
 - [x] `audit.sh .` exits 0 with 100% score against this repo
 
+**Completed steps (continued):**
+- [x] L05: cross-session continuity, clock-in/out, context anxiety (commit 2be9e1f)
+- [x] L07: WIP=1 enforcement, VCR monitoring, make vcr target (commit 5635768)
+- [x] audit.sh: actionable "What to fix" recommendations section (commit 35d0dbd)
+- [x] L08: verify-feature.sh harness gate, Feature List Rules in AGENTS.md, audit checks, CHECKLIST.md items
+
 **In progress:**
-- _None — initial scaffold complete_
+- _None_
 
 **Blockers:**
 - _None_
 
 **Next steps:**
-- Initialize git repository and make initial commit
+- L09 and beyond (lecture backlog)
 
 ---
 

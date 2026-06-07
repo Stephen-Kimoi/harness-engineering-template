@@ -25,10 +25,10 @@
   },
   {
     "id": "F04",
-    "behavior": "templates/ directory contains all 8 required template files with inline fill-in-the-blanks guidance",
-    "verification": "ls templates/AGENTS.md templates/PROGRESS.md templates/DECISIONS.md templates/feature_list.json templates/session-handoff.md templates/clean-state-checklist.md templates/Makefile templates/docs/decisions/000-template.md",
+    "behavior": "templates/ directory contains all required template files with inline fill-in-the-blanks guidance, including scripts/verify-feature.sh",
+    "verification": "ls templates/AGENTS.md templates/PROGRESS.md templates/DECISIONS.md templates/feature_list.json templates/session-handoff.md templates/clean-state-checklist.md templates/Makefile templates/docs/decisions/000-template.md templates/scripts/verify-feature.sh",
     "state": "passing",
-    "evidence": "Initial scaffold — all 8 files present",
+    "evidence": "Updated for L08 — scripts/verify-feature.sh added to templates/",
     "notes": "Each template must have comment blocks explaining what to fill in"
   },
   {
@@ -54,5 +54,13 @@
     "state": "passing",
     "evidence": "Initial scaffold — README documents the test; audit.sh validates structural components",
     "notes": "Full Fresh Session Test requires human review; structural components are machine-verifiable"
+  },
+  {
+    "id": "F08",
+    "behavior": "scripts/verify-feature.sh provides harness-controlled pass-state gating: runs a feature's verification command and transitions state active → passing only on exit 0, writing evidence (commit hash + date)",
+    "verification": "bash -n scripts/verify-feature.sh && grep -q 'active.*passing\\|passing.*active\\|state.*passing' scripts/verify-feature.sh && make verify-feature F=INVALID 2>&1 | grep -q 'not found\\|Usage'",
+    "state": "passing",
+    "evidence": "commit 35d0dbd, verified 2026-06-07",
+    "notes": "jq required at runtime; script guards against wrong state transitions and missing feature IDs"
   }
 ]

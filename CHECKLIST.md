@@ -93,6 +93,16 @@ Run the automated version: `./audit.sh`
 - [ ] **Clock-out**: At session end, the agent updates `PROGRESS.md`, commits a clean state, and leaves no debug artifacts `[L14]`
 - [ ] **Initialization phase**: The first session in a new project produces a Startup Readiness document confirming: environment installs, at least one test passes, next steps are listed `[L15]`
 
+### Feature List as Harness Primitive `[L08]`
+
+- [ ] `feature_list.json` entries each have an `evidence` field (commit hash + date, populated when state transitions to passing) `[L08]`
+- [ ] `scripts/verify-feature.sh` (or equivalent) is present — the harness-owned gate that runs verification and updates state `[L08]`
+- [ ] `make verify-feature F=<id>` target exists and delegates to `scripts/verify-feature.sh` `[L08]`
+- [ ] Feature List Rules are documented in `AGENTS.md`: pass-state gating, WIP=1, granularity, state machine `[L08]`
+- [ ] Feature granularity is correct: each entry is completable in one session (not too broad, not too narrow) `[L08]`
+- [ ] State machine is documented: `not_started → active → passing` (or `blocked`); no state skipping `[L08]`
+- [ ] Agent is explicitly instructed not to set `state: "passing"` directly — only `scripts/verify-feature.sh` may do so `[L08]`
+
 ### Feature Discipline `[L16–L17]`
 
 - [ ] **Feature gating**: Features advance through states `not_started → active → passing` only after the verification command passes — the agent cannot self-declare `passing` `[L16]`
