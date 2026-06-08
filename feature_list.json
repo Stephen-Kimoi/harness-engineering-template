@@ -60,7 +60,15 @@
     "behavior": "scripts/verify-feature.sh provides harness-controlled pass-state gating: runs a feature's verification command and transitions state active → passing only on exit 0, writing evidence (commit hash + date)",
     "verification": "bash -n scripts/verify-feature.sh && grep -q 'active.*passing\\|passing.*active\\|state.*passing' scripts/verify-feature.sh && make verify-feature F=INVALID 2>&1 | grep -q 'not found\\|Usage'",
     "state": "passing",
-    "evidence": "commit 35d0dbd, verified 2026-06-07",
+    "evidence": "commit 099437d, verified 2026-06-07",
     "notes": "jq required at runtime; script guards against wrong state transitions and missing feature IDs"
+  },
+  {
+    "id": "F09",
+    "behavior": "verify-feature.sh supports multi-layer validation (L09): if feature has a 'layers' array, runs each layer in order, prints layer label + repair instruction on failure, skips remaining layers, transitions to passing only when all layers pass",
+    "verification": "bash -n scripts/verify-feature.sh && grep -q 'run_layer' scripts/verify-feature.sh && grep -q 'How to fix\\|repair' scripts/verify-feature.sh && grep -q 'has_layers' scripts/verify-feature.sh",
+    "state": "passing",
+    "evidence": "commit 099437d, verified 2026-06-07",
+    "notes": "Backward compatible: features without a 'layers' field still use the single 'verification' string (L08 mode)"
   }
 ]

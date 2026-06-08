@@ -109,6 +109,35 @@ A task is done when `make check` exits 0. Agent confidence is not evidence of co
 
 ---
 
+## Definition of Done
+
+<!-- L09: Externalize termination judgment. The harness decides completion, not the agent.
+     Fill in the actual commands for each layer below. -->
+
+A task is complete when runtime evidence says so — not when the agent is confident, not when code is written.
+
+**Required verification levels (must pass in order — do not skip ahead):**
+
+| Layer | What it checks | Command |
+|-------|---------------|---------|
+| 1 — Syntax & Static | Compiles, types check, linter passes | `<e.g., make lint>` |
+| 2 — Runtime Behavior | Tests pass, app starts, critical paths run | `<e.g., make test>` |
+| 3 — System Confirmation | End-to-end scenarios, side effects correct | `<e.g., make e2e>` |
+
+**Rules:**
+- Do not proceed to Layer 2 if Layer 1 fails
+- Do not proceed to Layer 3 if Layer 2 fails
+- "Code is written" is not done. "All layers pass" is done.
+- `make verify-feature F=<id>` enforces this sequence automatically when a `layers` array is defined in `feature_list.json`
+
+**Runtime signals to confirm at Layer 3:**
+- Application starts and reaches a ready state
+- Critical feature paths execute at runtime (not only in unit tests)
+- Database writes, file operations, and other side effects are correct
+- No temporary resources, debug artifacts, or `console.log`/`IO.inspect` remain
+
+---
+
 ## Feature List Rules
 
 Feature state is controlled by the harness, not the agent. The agent proposes verification; the harness decides whether the transition is allowed.

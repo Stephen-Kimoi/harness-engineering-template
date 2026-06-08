@@ -363,6 +363,41 @@ check_recommended "State machine documented (not_started → active → passing)
   "$(contains_pattern "$ipath_l08" "(not_started|state machine|no skipping|active.*passing)")" \
   "Document the state machine in $ipath_l08: not_started → active → passing. Note that skipping states is not allowed."
 
+# ── L09: Preventing Premature Completion Declarations ─────────────────────────
+header "L09: Premature Completion Prevention"
+
+ipath_l09="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_recommended "Definition of Done section present in instructions [L09]" \
+  "$(contains_pattern "$ipath_l09" "(definition of done|feature complete|runtime evidence|code is written|all layers pass)")" \
+  "Add a 'Definition of Done' section to $ipath_l09 stating: 'A task is complete when runtime evidence passes — not when code is written or the agent is confident.'"
+
+check_recommended "Three-layer verification model documented [L09]" \
+  "$(contains_pattern "$ipath_l09" "(layer 1|layer 2|layer 3|syntax.*static|runtime.*behav|system.*confirm|end.to.end.*verif)")" \
+  "Document the three-layer model in $ipath_l09: Layer 1 (syntax/static), Layer 2 (runtime behavior), Layer 3 (system confirmation / e2e)."
+
+check_recommended "Layer ordering rule documented (do not skip layers) [L09]" \
+  "$(contains_pattern "$ipath_l09" "(do not proceed|don.t proceed|layer.*fail|skip.*layer|must pass in order|in order)")" \
+  "Add the ordering rule to $ipath_l09: 'Do not proceed to Layer N+1 if Layer N fails.'"
+
+check_recommended "Runtime signals documented (app startup, side effects) [L09]" \
+  "$(contains_pattern "$ipath_l09" "(ready state|app.*start|startup|side effect|database write|file operation|cleanup|debug artifact)")" \
+  "Add runtime signals to $ipath_l09: app reaches ready state, side effects are correct, no debug artifacts remain."
+
+# Check for layers field with repair instructions in feature_list.json
+_fl_l09="$(_fl_path)"
+_has_layers_repair="fail"
+if [[ -n "$_fl_l09" ]] && grep -q '"layers"' "$_fl_l09" 2>/dev/null && grep -q '"repair"' "$_fl_l09" 2>/dev/null; then
+  _has_layers_repair="pass"
+fi
+check_recommended "feature_list.json uses layers with repair instructions [L09]" \
+  "$_has_layers_repair" \
+  "Add a 'layers' array to feature_list.json entries. Each layer needs: label, cmd, repair. The repair field gives the agent actionable fix instructions on failure."
+
+check_recommended "verify-feature.sh handles multi-layer validation with repair output [L09]" \
+  "$(grep -q 'repair\|run_layer\|How to fix' "$REPO/scripts/verify-feature.sh" 2>/dev/null && echo "pass" || echo "fail")" \
+  "Update scripts/verify-feature.sh to run layers in sequence and print the repair instruction when a layer fails. Get the updated template from the harness-engineering-template repo."
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))
 TOTAL=$((CRITICAL_PASS + CRITICAL_FAIL + RECOMMENDED_PASS + RECOMMENDED_FAIL))

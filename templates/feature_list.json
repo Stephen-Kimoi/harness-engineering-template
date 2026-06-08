@@ -3,6 +3,23 @@
     "id": "F01",
     "behavior": "User can register a new account with email and password; receives a confirmation email",
     "verification": "make test TEST=test/accounts/registration_test.exs",
+    "layers": [
+      {
+        "label": "Layer 1 — Syntax & Static",
+        "cmd": "make lint",
+        "repair": "Run 'make lint' and fix each reported violation before proceeding. Common issues: unused variables, missing type annotations, formatter violations."
+      },
+      {
+        "label": "Layer 2 — Runtime Behavior",
+        "cmd": "make test TEST=test/accounts/registration_test.exs",
+        "repair": "If 'connection refused': ensure the database is running (make db-start). If assertion failure: check the test output for the specific field or response mismatch."
+      },
+      {
+        "label": "Layer 3 — System Confirmation",
+        "cmd": "make e2e SCENARIO=user-registration",
+        "repair": "E2E failure usually means an env var is missing or the email service is not configured. Check that SMTP_HOST is set and templates/registration-email.html exists."
+      }
+    ],
     "state": "passing",
     "evidence": "abc1234 — all 8 registration tests passing as of 2024-11-10",
     "notes": "Confirmation email uses Swoosh in dev (mailbox at /dev/mailbox)"
@@ -11,6 +28,23 @@
     "id": "F02",
     "behavior": "Authenticated user can create, read, update, and delete their own articles; cannot modify others'",
     "verification": "make test TEST=test/api/articles_test.exs",
+    "layers": [
+      {
+        "label": "Layer 1 — Syntax & Static",
+        "cmd": "make lint",
+        "repair": "Run 'make lint' and fix each reported violation."
+      },
+      {
+        "label": "Layer 2 — Runtime Behavior",
+        "cmd": "make test TEST=test/api/articles_test.exs",
+        "repair": "If authorization test fails: check that the policy module is loaded in the router plug pipeline. The policy file is at lib/myapp_web/policies/article_policy.ex."
+      },
+      {
+        "label": "Layer 3 — System Confirmation",
+        "cmd": "make e2e SCENARIO=article-crud",
+        "repair": "If the e2e scenario 'create article' fails with 401: the test user token may be expired. Regenerate with 'make e2e-seed'."
+      }
+    ],
     "state": "active",
     "evidence": "",
     "notes": "CRUD endpoints complete; authorization policy for other-user articles still in progress"
@@ -19,6 +53,23 @@
     "id": "F03",
     "behavior": "Article listing endpoint supports cursor-based pagination with configurable page size (max 50)",
     "verification": "make test TEST=test/api/articles_pagination_test.exs",
+    "layers": [
+      {
+        "label": "Layer 1 — Syntax & Static",
+        "cmd": "make lint",
+        "repair": "Run 'make lint' and fix each reported violation."
+      },
+      {
+        "label": "Layer 2 — Runtime Behavior",
+        "cmd": "make test TEST=test/api/articles_pagination_test.exs",
+        "repair": "If cursor decode fails: check that the cursor format matches the Cursor module in lib/myapp/pagination.ex. See DECISIONS.md for the chosen pagination strategy."
+      },
+      {
+        "label": "Layer 3 — System Confirmation",
+        "cmd": "make e2e SCENARIO=article-pagination",
+        "repair": "If page_size > 50 is not rejected: ensure the changeset validation is applied in the ArticleController.index/2 action, not only in the schema."
+      }
+    ],
     "state": "not_started",
     "evidence": "",
     "notes": "Blocked on F02 reaching passing state first; see DECISIONS.md for pagination strategy"

@@ -93,6 +93,16 @@ Run the automated version: `./audit.sh`
 - [ ] **Clock-out**: At session end, the agent updates `PROGRESS.md`, commits a clean state, and leaves no debug artifacts `[L14]`
 - [ ] **Initialization phase**: The first session in a new project produces a Startup Readiness document confirming: environment installs, at least one test passes, next steps are listed `[L15]`
 
+### Premature Completion Prevention `[L09]`
+
+- [ ] `AGENTS.md` has a "Definition of Done" section: completion = runtime evidence, not agent confidence `[L09]`
+- [ ] Three-layer verification model is documented: Layer 1 (syntax/static), Layer 2 (runtime), Layer 3 (system/e2e) `[L09]`
+- [ ] Layer ordering rule is explicit: do not proceed to Layer N+1 if Layer N fails `[L09]`
+- [ ] Runtime signals are listed: app startup, side effects, cleanup of debug artifacts `[L09]`
+- [ ] `feature_list.json` entries use a `layers` array with `label`, `cmd`, and `repair` fields `[L09]`
+- [ ] `repair` instructions are agent-actionable: name the specific file, env var, or command to fix — not just "fix the error" `[L09]`
+- [ ] `scripts/verify-feature.sh` runs layers in sequence, prints repair instruction on failure, and skips subsequent layers `[L09]`
+
 ### Feature List as Harness Primitive `[L08]`
 
 - [ ] `feature_list.json` entries each have an `evidence` field (commit hash + date, populated when state transitions to passing) `[L08]`

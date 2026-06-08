@@ -70,6 +70,32 @@ make check
 
 ---
 
+## Definition of Done
+
+A task is complete when runtime evidence says so — not when the agent is confident, not when code is written. The harness makes the termination judgment, not the agent.
+
+**Required verification levels (must pass in order — do not skip ahead):**
+
+| Layer | What it checks | Example command |
+|-------|---------------|-----------------|
+| 1 — Syntax & Static | Compiles, types check, linter passes | `make lint` |
+| 2 — Runtime Behavior | Tests pass, app starts, critical paths run | `make test` |
+| 3 — System Confirmation | End-to-end scenarios, side effects correct | `make check` |
+
+**Rules:**
+- Do not proceed to Layer 2 if Layer 1 fails
+- Do not proceed to Layer 3 if Layer 2 fails
+- "Code is written" is not done. "All layers pass" is done.
+- `make verify-feature F=<id>` enforces this sequence automatically
+
+**Runtime signals to confirm at Layer 3:**
+- Application starts and reaches a ready state
+- Critical feature paths execute at runtime (not only in unit tests)
+- Database writes, file operations, and other side effects are correct
+- No temporary resources, debug artifacts, or `console.log`/`IO.inspect` remain
+
+---
+
 ## Feature List Rules
 
 Feature state is controlled by the harness, not the agent. The agent proposes verification; the harness decides whether the transition is allowed.
