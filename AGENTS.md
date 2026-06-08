@@ -70,51 +70,19 @@ make check
 
 ---
 
-## Definition of Done
+## Definition of Done / Feature Workflow / Architecture Boundaries
 
-A task is complete when runtime evidence says so — not when the agent is confident, not when code is written. The harness makes the termination judgment, not the agent.
+See [`docs/harness-workflow.md`](docs/harness-workflow.md) for:
+- Three-layer verification model (syntax → runtime → e2e) and layer ordering rules
+- Architecture Boundaries: `make check-arch`, `.harness/arch-rules.json`, WHAT/WHY/FIX format
+- Feature List Rules: WIP=1, pass-state gating, state machine, evidence requirements
 
-**Required verification levels (must pass in order — do not skip ahead):**
-
-| Layer | What it checks | Example command |
-|-------|---------------|-----------------|
-| 1 — Syntax & Static | Compiles, types check, linter passes | `make lint` |
-| 2 — Runtime Behavior | Tests pass, app starts, critical paths run | `make test` |
-| 3 — System Confirmation | End-to-end scenarios, side effects correct | `make check` |
-
-**Rules:**
-- Do not proceed to Layer 2 if Layer 1 fails
-- Do not proceed to Layer 3 if Layer 2 fails
-- "Code is written" is not done. "All layers pass" is done.
-- `make verify-feature F=<id>` enforces this sequence automatically
-
-**Runtime signals to confirm at Layer 3:**
-- Application starts and reaches a ready state
-- Critical feature paths execute at runtime (not only in unit tests)
-- Database writes, file operations, and other side effects are correct
-- No temporary resources, debug artifacts, or `console.log`/`IO.inspect` remain
-
----
-
-## Feature List Rules
-
-Feature state is controlled by the harness, not the agent. The agent proposes verification; the harness decides whether the transition is allowed.
-
-| Rule | Detail |
-|------|--------|
-| **File** | `feature_list.json` at repo root |
-| **WIP=1** | Only one feature may be `active` at a time — run `make vcr` before activating a new one |
-| **Pass-state gating** | Never set `state` to `"passing"` directly — run `make verify-feature F=<id>` and let the harness update the state |
-| **Evidence required** | A feature is not passing until `evidence` contains a commit hash and verified date |
-| **Granularity** | One feature = one completable session ("User can add items to cart" ✓; "Implement the cart" ✗; "Create Cart model name field" ✗) |
-| **State machine** | `not_started` → `active` → `passing` (or `blocked`). No skipping states. |
-
-Workflow for completing a feature:
-1. Confirm VCR = 1.0: `make vcr`
-2. Set feature state to `active` in `feature_list.json`, commit
-3. Build and verify: `make check`
-4. Run the gate: `make verify-feature F=<id>` — this runs the verification command and updates state if it passes
-5. Commit the updated `feature_list.json` with the new state and evidence
+**Key rules (read full doc when working on features or arch constraints):**
+- Done = all layers pass. "Code written" is not done. Do not proceed to Layer N+1 if Layer N fails.
+- Layer 3 (e2e) required for cross-component changes
+- One feature = one completable session — if it spans sessions, split it
+- Never set feature state to `passing` directly — use `make verify-feature F=<id>`
+- Every code-review error category → new rule in `.harness/arch-rules.json`
 
 ---
 
@@ -186,5 +154,7 @@ harness-engineering-template/
 │   ├── skills/                 Same skills collection, drop-in ready
 │   └── docs/decisions/
 │       └── 000-template.md
+├── docs/
+│   └── harness-workflow.md         Definition of Done, arch boundaries, feature workflow detail
 └── examples/                   Reserved for real-world filled-in examples
 ```

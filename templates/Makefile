@@ -2,7 +2,7 @@
 # Replace each placeholder command with your project's actual command.
 # All targets should exit non-zero on failure.
 
-.PHONY: setup dev test format lint check clean vcr verify-feature
+.PHONY: setup dev test format lint check clean vcr verify-feature check-arch e2e
 
 ## setup — install dependencies and initialize the environment/database
 setup:
@@ -59,6 +59,23 @@ check:
 	#   black --check . && flake8 && pytest
 	@echo "Replace this with your check command"
 	@exit 1
+
+## e2e — run end-to-end / system-level tests (Layer 3 of the verification hierarchy)
+## Required when changes cross component boundaries (L10).
+e2e:
+	# Replace with your project's actual e2e command
+	# Examples:
+	#   mix test --only e2e
+	#   npx playwright test
+	#   pytest tests/e2e/
+	#   go test ./e2e/...
+	@echo "Replace this with your e2e command"
+	@exit 1
+
+## check-arch — run architectural constraint checks from .harness/arch-rules.json (L10)
+## Every code-review finding that reveals a new agent error category should become a rule here.
+check-arch:
+	@bash scripts/check-arch.sh
 
 ## verify-feature — run a feature's verification command and transition state to passing if it passes
 ## Usage: make verify-feature F=F02

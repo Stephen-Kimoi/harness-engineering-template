@@ -7,8 +7,8 @@ Update in real time, not at the end of the session.
 
 ## Current State
 
-- **Last commit:** `099437d` — feat: L08 — feature list as harness primitive with pass-state gating
-- **Tests:** audit.sh self-audit passing — 48 / 51 components present, 7 / 7 critical
+- **Last commit:** `eb6e729` — feat: L09 — three-layer termination validation and repair instructions
+- **Tests:** audit.sh self-audit passing — 56 / 59 components present, 7 / 7 critical
 - **Lint:** shellcheck not installed locally (clean in CI)
 - **Build:** no build step — bash/markdown repo
 
@@ -52,6 +52,7 @@ Update in real time, not at the end of the session.
 - [x] audit.sh: actionable "What to fix" recommendations section (commit 35d0dbd)
 - [x] L08: verify-feature.sh harness gate, Feature List Rules in AGENTS.md, audit checks, CHECKLIST.md items
 - [x] L09: three-layer verification model, Definition of Done section, layers+repair in feature_list.json template, verify-feature.sh multi-layer support, audit checks
+- [x] L10: check-arch.sh + .harness/arch-rules.json, make e2e + make check-arch targets, Architecture Boundaries section, WHAT/WHY/FIX error format, docs/harness-workflow.md split, 8 audit checks
 
 **In progress:**
 - _None_

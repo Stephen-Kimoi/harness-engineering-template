@@ -127,6 +127,7 @@ A task is complete when runtime evidence says so — not when the agent is confi
 **Rules:**
 - Do not proceed to Layer 2 if Layer 1 fails
 - Do not proceed to Layer 3 if Layer 2 fails
+- Layer 3 is required when changes cross component or domain boundaries
 - "Code is written" is not done. "All layers pass" is done.
 - `make verify-feature F=<id>` enforces this sequence automatically when a `layers` array is defined in `feature_list.json`
 
@@ -135,6 +136,37 @@ A task is complete when runtime evidence says so — not when the agent is confi
 - Critical feature paths execute at runtime (not only in unit tests)
 - Database writes, file operations, and other side effects are correct
 - No temporary resources, debug artifacts, or `console.log`/`IO.inspect` remain
+
+---
+
+## Architecture Boundaries
+
+<!-- L10: Define boundaries before writing features. Enforce invariants, not implementations.
+     Fill in the actual layers and rules for your project's architecture.
+     FILL IN: Replace the example layers and rules below. -->
+
+Architectural constraints are enforced mechanically via `make check-arch`. Every time a new error category is caught in code review, it must be promoted into `.harness/arch-rules.json` as an automated check.
+
+**Layers (example — replace with your actual architecture):**
+```
+<e.g., Types → Config → Repo → Service → Runtime → UI>
+Dependencies flow forward only. Cross-layer violations are caught by make check-arch.
+```
+
+**Running the checks:**
+```bash
+make check-arch   # runs all rules in .harness/arch-rules.json
+make e2e          # Layer 3: system-level confirmation
+```
+
+**Error message format** (WHAT / WHY / FIX — so the agent can self-correct without human intervention):
+```
+WHAT: Found direct import of 'fs' in src/renderer/App.tsx:12
+WHY:  Renderer process has no access to Node.js APIs for security
+FIX:  Move file operations to src/preload/file-ops.ts and call via window.api.readFile()
+```
+
+**Principle:** Enforce invariants, not implementations. "Data parsed at the boundary" — not which library. This keeps constraints stable while implementations evolve.
 
 ---
 

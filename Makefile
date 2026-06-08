@@ -1,4 +1,4 @@
-.PHONY: setup dev test check audit lint vcr verify-feature
+.PHONY: setup dev test check audit lint vcr verify-feature check-arch e2e
 
 ## setup — verify bash >= 5 and optionally install shellcheck
 setup:
@@ -12,8 +12,12 @@ dev:
 ## test — run audit.sh as the test suite for this repo
 test: audit
 
-## check — run shellcheck on audit.sh, self-audit this repo, and verify VCR = 1.0
-check: lint audit vcr
+## check — run shellcheck, self-audit, arch checks, and verify VCR = 1.0
+check: lint check-arch audit vcr
+
+## e2e — end-to-end verification (documentation repo: no e2e suite; pass-through)
+e2e:
+	@echo "E2E: no end-to-end suite for this documentation repo — OK"
 
 ## lint — run shellcheck on audit.sh
 lint:
@@ -23,6 +27,10 @@ lint:
 ## audit — run audit.sh against this template repo (must score 100%)
 audit:
 	@bash audit.sh .
+
+## check-arch — run architectural constraint checks from .harness/arch-rules.json
+check-arch:
+	@bash scripts/check-arch.sh
 
 ## verify-feature — run a feature's verification command and transition state to passing if it passes
 ## Usage: make verify-feature F=F02

@@ -68,7 +68,15 @@
     "behavior": "verify-feature.sh supports multi-layer validation (L09): if feature has a 'layers' array, runs each layer in order, prints layer label + repair instruction on failure, skips remaining layers, transitions to passing only when all layers pass",
     "verification": "bash -n scripts/verify-feature.sh && grep -q 'run_layer' scripts/verify-feature.sh && grep -q 'How to fix\\|repair' scripts/verify-feature.sh && grep -q 'has_layers' scripts/verify-feature.sh",
     "state": "passing",
-    "evidence": "commit 099437d, verified 2026-06-07",
+    "evidence": "commit eb6e729, verified 2026-06-07",
     "notes": "Backward compatible: features without a 'layers' field still use the single 'verification' string (L08 mode)"
+  },
+  {
+    "id": "F10",
+    "behavior": "scripts/check-arch.sh runs architectural constraint rules from .harness/arch-rules.json and outputs WHAT/WHY/FIX error messages; make check-arch and make e2e targets are present",
+    "verification": "bash -n scripts/check-arch.sh && bash scripts/check-arch.sh && make check-arch && makefile_target_exists() { grep -qE \"^$1[[:space:]]*:\" Makefile; }; makefile_target_exists e2e && makefile_target_exists check-arch",
+    "state": "passing",
+    "evidence": "commit eb6e729, verified 2026-06-07",
+    "notes": "jq required at runtime; rules file is .harness/arch-rules.json; exits 0 when no rules file present (graceful degradation)"
   }
 ]

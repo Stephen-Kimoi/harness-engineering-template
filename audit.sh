@@ -398,6 +398,43 @@ check_recommended "verify-feature.sh handles multi-layer validation with repair 
   "$(grep -q 'repair\|run_layer\|How to fix' "$REPO/scripts/verify-feature.sh" 2>/dev/null && echo "pass" || echo "fail")" \
   "Update scripts/verify-feature.sh to run layers in sequence and print the repair instruction when a layer fails. Get the updated template from the harness-engineering-template repo."
 
+# ── L10: End-to-End Testing and Architectural Boundaries ─────────────────────
+header "L10: E2E Testing and Architectural Boundaries"
+
+ipath_l10="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_recommended "make e2e target exists in Makefile [L10]" \
+  "$(makefile_has_target "e2e")" \
+  "Add an 'e2e:' target to Makefile running your end-to-end suite (e.g. 'npx playwright test', 'pytest tests/e2e/', 'mix test --only e2e'). Required when changes cross component boundaries."
+
+check_recommended "make check-arch target exists in Makefile [L10]" \
+  "$(makefile_has_target "check-arch")" \
+  "Add a 'check-arch:' target to Makefile: 'bash scripts/check-arch.sh'. This runs architectural constraint rules and outputs WHAT/WHY/FIX on violations."
+
+check_recommended "scripts/check-arch.sh present [L10]" \
+  "$(any_file_match "scripts/check-arch.sh")" \
+  "Create scripts/check-arch.sh — the architectural constraint runner. Get the template from: https://github.com/Stephen-Kimoi/harness-engineering-template/blob/main/scripts/check-arch.sh"
+
+check_recommended ".harness/arch-rules.json present (architectural rule registry) [L10]" \
+  "$(any_file_match ".harness/arch-rules.json")" \
+  "Create .harness/arch-rules.json with at least one rule. Each rule needs: id, description, check, expect, what, why, fix. Promote every code-review finding into a rule here."
+
+check_recommended "Arch rules use WHAT/WHY/FIX error format [L10]" \
+  "$( [[ -f "$REPO/.harness/arch-rules.json" ]] && grep -q '"what"' "$REPO/.harness/arch-rules.json" && grep -q '"why"' "$REPO/.harness/arch-rules.json" && grep -q '"fix"' "$REPO/.harness/arch-rules.json" && echo "pass" || echo "fail" )" \
+  "Ensure each rule in .harness/arch-rules.json has 'what', 'why', and 'fix' fields with agent-actionable text (name the specific file, function, or env var to change)."
+
+check_recommended "Architecture Boundaries section present in instructions [L10]" \
+  "$(contains_pattern "$ipath_l10" "(architecture.*boundar|arch.*boundar|layer.*depend|enforce.*invariant|check-arch|arch.rules)")" \
+  "Add an Architecture Boundaries section to $ipath_l10 describing your layer model and stating that 'make check-arch' enforces the constraints."
+
+check_recommended "E2E requirement for cross-component changes documented [L10]" \
+  "$(contains_pattern "$ipath_l10" "(cross.component|cross.domain|layer 3.*required|e2e.*required|end.to.end.*required|required.*cross)")" \
+  "Add a rule to $ipath_l10: 'Layer 3 (e2e) is required when changes cross component or domain boundaries.'"
+
+check_recommended "Review-to-automation promotion principle documented [L10]" \
+  "$(contains_pattern "$ipath_l10" "(code review.*automat|review.*promot|promot.*check|new.*error.*rule|catch.*review.*rule|arch.rules)")" \
+  "Add the promotion principle to $ipath_l10: 'Every new error category caught in code review becomes a rule in .harness/arch-rules.json.'"
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))
 TOTAL=$((CRITICAL_PASS + CRITICAL_FAIL + RECOMMENDED_PASS + RECOMMENDED_FAIL))

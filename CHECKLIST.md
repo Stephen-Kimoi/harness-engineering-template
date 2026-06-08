@@ -93,6 +93,18 @@ Run the automated version: `./audit.sh`
 - [ ] **Clock-out**: At session end, the agent updates `PROGRESS.md`, commits a clean state, and leaves no debug artifacts `[L14]`
 - [ ] **Initialization phase**: The first session in a new project produces a Startup Readiness document confirming: environment installs, at least one test passes, next steps are listed `[L15]`
 
+### End-to-End Testing and Architectural Boundaries `[L10]`
+
+- [ ] `make e2e` target is present and runs the system-level test suite `[L10]`
+- [ ] `make check-arch` target runs `.harness/arch-rules.json` rules `[L10]`
+- [ ] `scripts/check-arch.sh` is present and outputs WHAT / WHY / FIX on violations `[L10]`
+- [ ] `.harness/arch-rules.json` exists with at least one rule per known error category `[L10]`
+- [ ] Each arch rule uses the three-element error format: what, why, fix — with agent-actionable fix text `[L10]`
+- [ ] Architecture boundaries are defined before features are written (prerequisite documented) `[L10]`
+- [ ] Architecture Boundaries section present in `AGENTS.md` describing the layer model `[L10]`
+- [ ] Layer 3 (e2e) is explicitly required for cross-component changes `[L10]`
+- [ ] Review-to-automation promotion principle is documented: every new error category caught in review becomes an arch rule `[L10]`
+
 ### Premature Completion Prevention `[L09]`
 
 - [ ] `AGENTS.md` has a "Definition of Done" section: completion = runtime evidence, not agent confidence `[L09]`

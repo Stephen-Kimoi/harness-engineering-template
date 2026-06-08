@@ -1,0 +1,47 @@
+[
+  {
+    "id": "A01",
+    "description": "audit.sh is valid bash (no syntax errors)",
+    "check": "bash -n audit.sh",
+    "expect": "exit-0",
+    "what": "audit.sh contains a bash syntax error",
+    "why": "A broken audit.sh makes the entire verification pipeline fail silently — the repo self-audit stops working",
+    "fix": "Run 'bash -n audit.sh' locally and fix the reported syntax error on the indicated line"
+  },
+  {
+    "id": "A02",
+    "description": "verify-feature.sh is valid bash (no syntax errors)",
+    "check": "bash -n scripts/verify-feature.sh",
+    "expect": "exit-0",
+    "what": "scripts/verify-feature.sh contains a bash syntax error",
+    "why": "A broken verify-feature.sh disables the pass-state gate — features cannot be transitioned to passing",
+    "fix": "Run 'bash -n scripts/verify-feature.sh' locally and fix the reported syntax error"
+  },
+  {
+    "id": "A03",
+    "description": "check-arch.sh is valid bash (no syntax errors)",
+    "check": "bash -n scripts/check-arch.sh",
+    "expect": "exit-0",
+    "what": "scripts/check-arch.sh contains a bash syntax error",
+    "why": "A broken check-arch.sh means architectural constraints are not enforced",
+    "fix": "Run 'bash -n scripts/check-arch.sh' locally and fix the reported syntax error"
+  },
+  {
+    "id": "A04",
+    "description": "feature_list.json is valid JSON",
+    "check": "jq empty feature_list.json",
+    "expect": "exit-0",
+    "what": "feature_list.json contains a JSON syntax error",
+    "why": "Invalid JSON breaks make vcr, verify-feature.sh, and audit.sh — the entire harness state-tracking pipeline fails",
+    "fix": "Run 'jq . feature_list.json' to see the parse error, then fix the malformed JSON at the reported line"
+  },
+  {
+    "id": "A05",
+    "description": "No placeholder '@exit 1' commands in root Makefile targets",
+    "check": "grep -n '@exit 1' Makefile",
+    "expect": "no-output",
+    "what": "Found '@exit 1' placeholder in root Makefile — a target is not yet implemented",
+    "why": "Placeholder targets cause 'make check' to fail with a misleading error and break self-audit",
+    "fix": "Replace '@exit 1' with the actual command for that target, or remove the target if it does not apply to this repo"
+  }
+]

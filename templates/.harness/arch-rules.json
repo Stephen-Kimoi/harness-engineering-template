@@ -1,0 +1,47 @@
+[
+  {
+    "id": "A01",
+    "description": "No debug artifacts left in source code (console.log, debugger, IO.inspect, binding.pry)",
+    "check": "grep -rn 'console\\.log\\|debugger\\|IO\\.inspect\\|binding\\.pry' src/ lib/ app/ 2>/dev/null | grep -v '\\.test\\.\\|_test\\|spec/'",
+    "expect": "no-output",
+    "what": "Found debug artifact in production source code",
+    "why": "Debug artifacts pollute production logs, expose internal state, and may crash environments that lack dev tooling",
+    "fix": "Remove the debug statement from the reported file and line. To observe this value in production, use the structured logger (Logger.info / console.error / log.Info) instead."
+  },
+  {
+    "id": "A02",
+    "description": "No TODO or FIXME comments left in committed code",
+    "check": "grep -rn 'TODO\\|FIXME\\|HACK\\|XXX' src/ lib/ app/ 2>/dev/null | grep -v '\\.test\\.\\|_test\\|spec/'",
+    "expect": "no-output",
+    "what": "Found a TODO/FIXME comment in production source code",
+    "why": "TODO comments represent unfinished work being committed — they accumulate and never get resolved, and agents treat them as authoritative design intent",
+    "fix": "Either complete the work now, or open a ticket and remove the comment. If the decision is non-obvious, log it in DECISIONS.md instead."
+  },
+  {
+    "id": "A03",
+    "description": "No hardcoded secrets or API keys in source",
+    "check": "grep -rn 'api_key[[:space:]]*=[[:space:]]*[\"'\\'''][a-zA-Z0-9_\\-]{20,}\\|secret[[:space:]]*=[[:space:]]*[\"'\\'''][a-zA-Z0-9_\\-]{20,}' src/ lib/ app/ 2>/dev/null | grep -v '\\.test\\.\\|_test\\|spec/'",
+    "expect": "no-output",
+    "what": "Found what looks like a hardcoded secret or API key in source code",
+    "why": "Hardcoded secrets end up in git history and cannot be safely rotated — the only fix is key rotation, not deletion",
+    "fix": "Move the value to an environment variable. Add the variable name to .env.example with a placeholder. Load it via process.env.KEY / System.get_env('KEY') / os.environ['KEY']."
+  },
+  {
+    "id": "A04",
+    "description": "feature_list.json is valid JSON",
+    "check": "jq empty feature_list.json 2>/dev/null || (echo 'feature_list.json missing or invalid' && exit 1)",
+    "expect": "exit-0",
+    "what": "feature_list.json is missing or contains a JSON syntax error",
+    "why": "Invalid JSON breaks make vcr, verify-feature.sh, and the entire feature state machine",
+    "fix": "Run 'jq . feature_list.json' to see the parse error. Fix the malformed JSON at the reported line, or create the file if it is missing."
+  },
+  {
+    "id": "A05",
+    "description": "No direct database queries outside the repository/data layer",
+    "check": "grep -rn 'Repo\\.\\|db\\.query\\|execute(' src/ lib/ app/ 2>/dev/null | grep -v 'repo/\\|repository/\\|/db/\\|\\.test\\.\\|_test\\|spec/'",
+    "expect": "no-output",
+    "what": "Found a direct database query outside the repository layer",
+    "why": "Database access from controllers or services bypasses transaction management and makes queries impossible to test in isolation",
+    "fix": "Move the query into the repository layer (e.g. lib/myapp/repo/ or src/repositories/). Call the repo function from the service or controller — never query the DB directly from those layers."
+  }
+]
