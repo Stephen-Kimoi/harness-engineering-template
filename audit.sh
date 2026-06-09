@@ -470,6 +470,39 @@ check_recommended "make session-start and session-end targets present [L11]" \
   "$(makefile_has_target "session-start")" \
   "Add session-start and session-end targets to Makefile wrapping scripts/session-trace.sh."
 
+# ── L12: Clean State Protocol ─────────────────────────────────────────────────
+header "L12: Clean State Protocol"
+
+ipath_l12="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_recommended "templates/clean-state-checklist.md present [L12]" \
+  "$(file_exists "templates/clean-state-checklist.md")" \
+  "Create templates/clean-state-checklist.md with the 5 dimensions: build passes, tests pass, feature list updated, no debug artifacts, startup path works. A session is not complete until all five pass."
+
+check_recommended "scripts/clean-state-check.sh present (idempotent verifier) [L12]" \
+  "$(any_file_match "scripts/clean-state-check.sh")" \
+  "Create scripts/clean-state-check.sh — an idempotent script that checks the 5 clean-state dimensions and exits 0 only when all pass. Safe to run repeatedly."
+
+check_recommended "make clean-check target present [L12]" \
+  "$(makefile_has_target "clean-check")" \
+  "Add a 'clean-check:' target to Makefile: 'bash scripts/clean-state-check.sh .'  Agents run this at clock-out before committing."
+
+check_recommended "Session exit checklist / clean-state referenced in instructions [L12]" \
+  "$(contains_pattern "$ipath_l12" "(clean.state|clean-state|clean_state|session exit|exit checklist|debug artifact|no.*debug|remove.*debug)")" \
+  "Add a clean-state reference to the Clock-Out section in $ipath_l12: 'Run make clean-check before committing — confirms build, no debug artifacts, PROGRESS.md updated.'"
+
+check_recommended "Quality document present (module health scores) [L12]" \
+  "$( [[ -f "$REPO/docs/quality-document.md" ]] || [[ -f "$REPO/templates/quality-document.md" ]] && echo "pass" || echo "fail" )" \
+  "Create docs/quality-document.md (or use templates/quality-document.md) scoring each module A/B/C/D across 5 dimensions. New sessions read this to know where to prioritize."
+
+check_recommended "Quality document referenced in instructions [L12]" \
+  "$(contains_pattern "$ipath_l12" "(quality.doc|quality doc|quality-doc|quality score|module.*grade|module.*quality|A.*B.*C.*D|grade.*module)")" \
+  "Reference the quality document in $ipath_l12 Clock-Out: 'Update docs/quality-document.md for the module you touched (A/B/C/D per dimension).'"
+
+check_recommended "Dual-mode cleanup documented (immediate + periodic/weekly) [L12]" \
+  "$(contains_pattern "$ipath_l12" "(periodic|weekly|monthly|dual.mode|immediate.*cleanup|cleanup.*periodic|regular.*sweep|periodic.*sweep)")" \
+  "Document the dual-mode cleanup strategy in $ipath_l12: immediate cleanup at every session end + periodic (weekly/monthly) full-system sweep for structural drift."
+
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))
 TOTAL=$((CRITICAL_PASS + CRITICAL_FAIL + RECOMMENDED_PASS + RECOMMENDED_FAIL))

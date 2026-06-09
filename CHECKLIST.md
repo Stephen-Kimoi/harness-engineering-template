@@ -125,6 +125,16 @@ Run the automated version: `./audit.sh`
 - [ ] `repair` instructions are agent-actionable: name the specific file, env var, or command to fix — not just "fix the error" `[L09]`
 - [ ] `scripts/verify-feature.sh` runs layers in sequence, prints repair instruction on failure, and skips subsequent layers `[L09]`
 
+### Clean State Protocol `[L12]`
+
+- [ ] `templates/clean-state-checklist.md` present with all 5 dimensions: build, tests, feature list, no debug artifacts, startup path `[L12]`
+- [ ] `scripts/clean-state-check.sh` present and idempotent — safe to run multiple times without side effects `[L12]`
+- [ ] `make clean-check` target exists and delegates to `scripts/clean-state-check.sh` `[L12]`
+- [ ] `templates/quality-document.md` present — module health scoring template (A/B/C/D per dimension) `[L12]`
+- [ ] Clock-out routine in `AGENTS.md` references the clean-state check — session is not complete until all 5 dimensions pass `[L12]`
+- [ ] Clock-out routine references the quality document — agent updates the relevant module score after each session `[L12]`
+- [ ] Dual-mode cleanup documented somewhere in the harness: immediate (every session) + periodic (weekly/monthly full sweep) `[L12]`
+
 ### Observability Inside the Harness `[L11-obs]`
 
 - [ ] `scripts/session-trace.sh` start, event, signal, end, and show subcommands all work correctly `[L11-obs]`

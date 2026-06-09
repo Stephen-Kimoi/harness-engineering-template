@@ -7,8 +7,8 @@ Update in real time, not at the end of the session.
 
 ## Current State
 
-- **Last commit:** `40f8878` — feat: L10 — e2e testing, architectural boundaries, WHAT/WHY/FIX error format
-- **Tests:** audit.sh self-audit passing (expected — L11 artifacts committed this session)
+- **Last commit:** `0d8912f` — feat: L11 — observability inside the harness
+- **Tests:** audit.sh self-audit 71/73, 7/7 critical (2 WARNs are pre-existing module-level doc checks — docs-only repo has no src/ directory)
 - **Lint:** shellcheck not installed locally (clean in CI)
 - **Build:** no build step — bash/markdown repo
 
@@ -53,7 +53,10 @@ Update in real time, not at the end of the session.
 - [x] L08: verify-feature.sh harness gate, Feature List Rules in AGENTS.md, audit checks, CHECKLIST.md items
 - [x] L09: three-layer verification model, Definition of Done section, layers+repair in feature_list.json template, verify-feature.sh multi-layer support, audit checks
 - [x] L10: check-arch.sh + .harness/arch-rules.json, make e2e + make check-arch targets, Architecture Boundaries section, WHAT/WHY/FIX error format, docs/harness-workflow.md split, 8 audit checks
-- [x] L11: session-trace.sh (JSONL event recorder), sprint-contract.md template, evaluator-rubric.md template, .harness/traces/ directory, make session-start/session-end/session-show targets, Observability Protocol in AGENTS.md, 7 audit checks, F11 in feature_list.json, CHECKLIST.md L11 items
+- [x] L11: session-trace.sh (JSONL event recorder), sprint-contract.md template, evaluator-rubric.md template, .harness/traces/ directory, make session-start/session-end/session-show targets, Observability Protocol in AGENTS.md, 7 audit checks, F11 in feature_list.json, CHECKLIST.md L11 items — F11 passing
+- [x] L12: clean-state-check.sh (idempotent 5-dimension verifier), quality-document.md template + docs/quality-document.md, make clean-check target, clock-out updated, dual-mode cleanup note, 7 audit checks, F12 in feature_list.json, CHECKLIST.md L12 items — F12 passing
+- [x] Bugfix: audit.sh check_critical/check_recommended now return 0 (set -e was silently killing script after L07 when VCR < 1.0)
+- [x] Bugfix: session-trace.sh show subcommand replaced mapfile with bash 3.2-compatible while+read loop
 
 **In progress:**
 - _None_
@@ -62,8 +65,7 @@ Update in real time, not at the end of the session.
 - _None_
 
 **Next steps:**
-- Run `make verify-feature F=F11` to transition F11 to passing after confirming all L11 artifacts pass
-- Continue with L12 and beyond from the course backlog
+- Continue with L13 and beyond from the course backlog
 
 ---
 

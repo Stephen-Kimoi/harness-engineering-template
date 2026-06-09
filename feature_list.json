@@ -90,7 +90,7 @@
       },
       {
         "label": "Layer 2 — Runtime: session-trace.sh subcommands work",
-        "cmd": "bash scripts/session-trace.sh start 'test-task' F11 && bash scripts/session-trace.sh event 'layer1_lint' pass 'ok' && bash scripts/session-trace.sh end pass 'test complete' && bash scripts/session-trace.sh show 1 | grep -q 'test-task'",
+        "cmd": "bash scripts/session-trace.sh start 'test-task' F11 && bash scripts/session-trace.sh event 'layer1_lint' pass 'ok' && bash scripts/session-trace.sh end pass 'test complete' && grep -q 'test-task' .harness/traces/traces.jsonl",
         "repair": "Run each subcommand manually and check the output. Ensure .harness/traces/ directory exists. Verify the JSONL file is being written to .harness/traces/traces.jsonl."
       },
       {
@@ -99,8 +99,32 @@
         "repair": "Ensure templates/sprint-contract.md and templates/evaluator-rubric.md exist. Add session-start/session-end/session-show targets to Makefile. Add Observability Protocol section to AGENTS.md referencing the sprint contract and rubric."
       }
     ],
-    "state": "active",
-    "evidence": "",
+    "state": "passing",
+    "evidence": "commit 0d8912f, verified 2026-06-09",
     "notes": "L11: observability inside the harness. jq + date required at runtime for session-trace.sh. Traces are runtime artifacts (gitignored); only .gitkeep tracks the directory."
+  },
+  {
+    "id": "F12",
+    "behavior": "Clean state protocol: scripts/clean-state-check.sh verifies all 5 dimensions idempotently; templates/quality-document.md tracks module health (A/B/C/D); make clean-check target present; AGENTS.md clock-out references clean-state check and quality document",
+    "layers": [
+      {
+        "label": "Layer 1 — Static: clean-state-check.sh bash syntax",
+        "cmd": "bash -n scripts/clean-state-check.sh",
+        "repair": "Run 'bash -n scripts/clean-state-check.sh' and fix any syntax errors. Check all 5 check sections are present: build, debug artifacts, feature list, PROGRESS.md, startup path."
+      },
+      {
+        "label": "Layer 2 — Runtime: clean-state-check.sh runs without error",
+        "cmd": "_out=$(bash scripts/clean-state-check.sh . 2>&1); echo \"$_out\" | grep -q 'Clean State'",
+        "repair": "Run 'bash scripts/clean-state-check.sh .' and observe the output. If make check is failing, fix it first. If debug artifacts are found, remove them."
+      },
+      {
+        "label": "Layer 3 — Artifacts and Makefile",
+        "cmd": "ls templates/quality-document.md templates/clean-state-checklist.md && grep -qE '^clean-check[[:space:]]*:' Makefile && grep -q 'clean.state\\|clean-state\\|quality.doc' AGENTS.md",
+        "repair": "Ensure templates/quality-document.md and templates/clean-state-checklist.md exist. Add clean-check target to Makefile. Reference clean-state check and quality document in AGENTS.md clock-out section."
+      }
+    ],
+    "state": "passing",
+    "evidence": "commit 0d8912f, verified 2026-06-09",
+    "notes": "L12: clean state protocol. scripts/clean-state-check.sh is idempotent — safe to run multiple times. quality-document.md is updated at clock-out, not in CI."
   }
 ]

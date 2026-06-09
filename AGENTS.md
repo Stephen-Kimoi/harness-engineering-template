@@ -116,11 +116,14 @@ Traces are written to `.harness/traces/traces.jsonl`. View with `make session-sh
 5. If starting a new feature, run `make vcr` — must exit 0 (VCR = 1.0) before activating
 
 ### Clock-Out (before closing the session)
-1. Run `make check` — must exit 0
+1. Run `make clean-check` — confirms build, no debug artifacts, PROGRESS.md updated, startup path valid (see `templates/clean-state-checklist.md`)
 2. Update `PROGRESS.md` → Current State with new commit hash and test counts
 3. Update Current Tasks: tick completed steps, update Known Issues with specific details, rewrite Next Steps as specific ordered actions
 4. Log any non-obvious decisions in `DECISIONS.md`
-5. Commit — message must explain **why** the change was made, not just what changed
+5. Update the relevant module entry in `docs/quality-document.md` (A/B/C/D per dimension)
+6. Commit — message must explain **why** the change was made, not just what changed
+
+**Periodic cleanup (weekly):** Full sweep — re-score all modules in `docs/quality-document.md`, promote C/D issues to `feature_list.json`, check for accumulated stale artifacts. This is in addition to the immediate cleanup at every session end.
 
 ### Context anxiety warning
 If the context window feels full: do not rush, skip verification, or choose a simpler solution to finish faster. Write a complete clock-out, commit what is clean and passing, and let the next session resume from `PROGRESS.md`.
@@ -175,6 +178,7 @@ harness-engineering-template/
 │   └── docs/decisions/
 │       └── 000-template.md
 ├── docs/
-│   └── harness-workflow.md         Definition of Done, arch boundaries, feature workflow detail
+│   ├── harness-workflow.md         Definition of Done, arch boundaries, feature workflow detail
+│   └── quality-document.md         Module health scores (A/B/C/D) — update at clock-out
 └── examples/                   Reserved for real-world filled-in examples
 ```

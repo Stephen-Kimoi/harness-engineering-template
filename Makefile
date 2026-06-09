@@ -1,4 +1,4 @@
-.PHONY: setup dev test check audit lint vcr verify-feature check-arch e2e session-start session-end session-show
+.PHONY: setup dev test check audit lint vcr verify-feature check-arch e2e session-start session-end session-show clean-check
 
 ## setup — verify bash >= 5 and optionally install shellcheck
 setup:
@@ -27,6 +27,11 @@ lint:
 ## audit — run audit.sh against this template repo (must score 100%)
 audit:
 	@bash audit.sh .
+
+## clean-check — run the idempotent session clean-state verifier (L12)
+## Confirms: build passes, no debug artifacts, feature list state, PROGRESS.md updated, startup path exists
+clean-check:
+	@bash scripts/clean-state-check.sh .
 
 ## session-start — begin a session trace (L11)
 ## Usage: make session-start TASK="implement dark mode" FEATURES="F03 F04"

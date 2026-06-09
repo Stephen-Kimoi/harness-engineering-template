@@ -125,7 +125,8 @@ case "$subcommand" in
     fi
 
     # Find the last N session_start IDs
-    mapfile -t session_ids < <(grep '"type":"session_start"' "$TRACE_FILE" | jq -r '.session_id' | tail -"$n")
+    session_ids=()
+    while IFS= read -r sid; do session_ids+=("$sid"); done < <(grep '"type":"session_start"' "$TRACE_FILE" | jq -r '.session_id' | tail -"$n")
 
     for sid in "${session_ids[@]}"; do
       echo -e "${CYAN}${BOLD}Session: $sid${RESET}"

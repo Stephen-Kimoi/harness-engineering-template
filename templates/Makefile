@@ -2,7 +2,7 @@
 # Replace each placeholder command with your project's actual command.
 # All targets should exit non-zero on failure.
 
-.PHONY: setup dev test format lint check clean vcr verify-feature check-arch e2e session-start session-end session-show
+.PHONY: setup dev test format lint check clean vcr verify-feature check-arch e2e session-start session-end session-show clean-check
 
 ## setup — install dependencies and initialize the environment/database
 setup:
@@ -88,6 +88,11 @@ session-end:
 ## Usage: make session-show [N=3]
 session-show:
 	@bash scripts/session-trace.sh show $(or $(N),1)
+
+## clean-check — run the idempotent session clean-state verifier (L12)
+## Confirms: build passes, no debug artifacts, feature list state, PROGRESS.md updated, startup path exists
+clean-check:
+	@bash scripts/clean-state-check.sh .
 
 ## check-arch — run architectural constraint checks from .harness/arch-rules.json (L10)
 ## Every code-review finding that reveals a new agent error category should become a rule here.
