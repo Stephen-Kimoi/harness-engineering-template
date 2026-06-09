@@ -64,6 +64,16 @@ Run the automated version: `./audit.sh`
 - [ ] Test coverage exists for each feature in `feature_list.json` that is in `passing` state `[L12]`
 - [ ] CI runs the same `check` command that the agent runs locally `[L13]`
 
+### Subsystem 5 (continued): Observability `[L11-obs]`
+
+- [ ] `scripts/session-trace.sh` (or equivalent) records structured JSONL events per session `[L11-obs]`
+- [ ] `templates/sprint-contract.md` present — pre-feature negotiation template defining scope, done criteria, and exclusions `[L11-obs]`
+- [ ] `templates/evaluator-rubric.md` present — scoring rubric with A/B/C/D thresholds per dimension `[L11-obs]`
+- [ ] `.harness/traces/` directory exists and is tracked (`.gitkeep`); runtime trace files are gitignored `[L11-obs]`
+- [ ] Observability protocol is documented in `AGENTS.md`: sprint contract before activation, session-trace during verification, rubric scoring after completion `[L11-obs]`
+- [ ] Evaluator rubric is referenced in `AGENTS.md`: every dimension must reach B or above before declaring passing `[L11-obs]`
+- [ ] `make session-start` and `make session-end` targets are present and delegate to `scripts/session-trace.sh` `[L11-obs]`
+
 ---
 
 ## Level 2 — Session Protocol Audit
@@ -114,6 +124,16 @@ Run the automated version: `./audit.sh`
 - [ ] `feature_list.json` entries use a `layers` array with `label`, `cmd`, and `repair` fields `[L09]`
 - [ ] `repair` instructions are agent-actionable: name the specific file, env var, or command to fix — not just "fix the error" `[L09]`
 - [ ] `scripts/verify-feature.sh` runs layers in sequence, prints repair instruction on failure, and skips subsequent layers `[L09]`
+
+### Observability Inside the Harness `[L11-obs]`
+
+- [ ] `scripts/session-trace.sh` start, event, signal, end, and show subcommands all work correctly `[L11-obs]`
+- [ ] Session trace produces valid JSONL: each line is a parseable JSON object with session_id, event, and timestamp `[L11-obs]`
+- [ ] Sprint contract is filled in before each feature is activated (scope, done criteria, exclusions) `[L11-obs]`
+- [ ] Each completed sprint is scored against the evaluator rubric before state transitions to `passing` `[L11-obs]`
+- [ ] No dimension is below B on the evaluator rubric at the time of feature completion `[L11-obs]`
+- [ ] Session trace is started at clock-in and closed at clock-out for every active feature session `[L11-obs]`
+- [ ] Agent narration is not the primary completion signal — runtime events in the trace are `[L11-obs]`
 
 ### Feature List as Harness Primitive `[L08]`
 

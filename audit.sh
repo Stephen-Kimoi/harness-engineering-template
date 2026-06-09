@@ -41,6 +41,7 @@ check_critical() {
     CRITICAL_FAIL=$((CRITICAL_FAIL + 1))
     [[ -n "$fix" ]] && RECS+=("${RED}[CRITICAL]${RESET} $fix")
   fi
+  return 0
 }
 
 check_recommended() {
@@ -55,6 +56,7 @@ check_recommended() {
     RECOMMENDED_FAIL=$((RECOMMENDED_FAIL + 1))
     [[ -n "$fix" ]] && RECS+=("${YELLOW}[RECOMMENDED]${RESET} $fix")
   fi
+  return 0
 }
 
 file_exists()    { [[ -f "$REPO/$1" ]] && echo "pass" || echo "fail"; }
@@ -434,6 +436,39 @@ check_recommended "E2E requirement for cross-component changes documented [L10]"
 check_recommended "Review-to-automation promotion principle documented [L10]" \
   "$(contains_pattern "$ipath_l10" "(code review.*automat|review.*promot|promot.*check|new.*error.*rule|catch.*review.*rule|arch.rules)")" \
   "Add the promotion principle to $ipath_l10: 'Every new error category caught in code review becomes a rule in .harness/arch-rules.json.'"
+
+# ── L11: Observability Inside the Harness ─────────────────────────────────────
+header "L11: Observability"
+
+ipath_l11="$(instructions_path 2>/dev/null || echo "AGENTS.md")"
+
+check_recommended "templates/sprint-contract.md present [L11]" \
+  "$(file_exists "templates/sprint-contract.md")" \
+  "Create templates/sprint-contract.md — the pre-feature negotiation template defining scope, DoD, and exclusions. Get it from: https://github.com/Stephen-Kimoi/harness-engineering-template/blob/main/templates/sprint-contract.md"
+
+check_recommended "templates/evaluator-rubric.md present [L11]" \
+  "$(file_exists "templates/evaluator-rubric.md")" \
+  "Create templates/evaluator-rubric.md — the scoring rubric with A/B/C/D thresholds per dimension (correctness, arch compliance, test coverage, verification evidence)."
+
+check_recommended "scripts/session-trace.sh present (runtime signal collector) [L11]" \
+  "$(any_file_match "scripts/session-trace.sh")" \
+  "Create scripts/session-trace.sh to record structured JSONL events per session. Get the template from: https://github.com/Stephen-Kimoi/harness-engineering-template/blob/main/scripts/session-trace.sh"
+
+check_recommended ".harness/traces/ directory present [L11]" \
+  "$(dir_exists ".harness/traces")" \
+  "Create .harness/traces/ directory (add a .gitkeep so it's tracked). Add .harness/traces/traces.jsonl to .gitignore — it's a runtime artifact, not source."
+
+check_recommended "Observability / sprint contract protocol documented in instructions [L11]" \
+  "$(contains_pattern "$ipath_l11" "(sprint contract|observabilit|session.trace|session-trace|runtime signal|signal collect)")" \
+  "Add an Observability section to $ipath_l11: sprint contract before each feature, session-trace events during verification, evaluator rubric scoring after completion."
+
+check_recommended "Evaluator rubric referenced in instructions [L11]" \
+  "$(contains_pattern "$ipath_l11" "(rubric|evaluator.*score|scoring.*dimension|dimension.*score|A or B|passing.*threshold)")" \
+  "Reference the evaluator rubric in $ipath_l11: 'Score each completed sprint against templates/evaluator-rubric.md — every dimension must reach B or above.'"
+
+check_recommended "make session-start and session-end targets present [L11]" \
+  "$(makefile_has_target "session-start")" \
+  "Add session-start and session-end targets to Makefile wrapping scripts/session-trace.sh."
 
 # ── Summary ────────────────────────────────────────────────────────────────────
 TOTAL_PASS=$((CRITICAL_PASS + RECOMMENDED_PASS))

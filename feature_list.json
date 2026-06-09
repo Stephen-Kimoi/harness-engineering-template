@@ -78,5 +78,29 @@
     "state": "passing",
     "evidence": "commit eb6e729, verified 2026-06-07",
     "notes": "jq required at runtime; rules file is .harness/arch-rules.json; exits 0 when no rules file present (graceful degradation)"
+  },
+  {
+    "id": "F11",
+    "behavior": "Observability inside the harness: scripts/session-trace.sh records JSONL events per session; templates/sprint-contract.md and templates/evaluator-rubric.md present; make session-start/session-end/session-show targets work; AGENTS.md documents the observability protocol",
+    "layers": [
+      {
+        "label": "Layer 1 — Static: session-trace.sh bash syntax",
+        "cmd": "bash -n scripts/session-trace.sh",
+        "repair": "Run 'bash -n scripts/session-trace.sh' and fix any syntax errors reported. Check that all subcommands (start, event, signal, end, show) are implemented as case branches."
+      },
+      {
+        "label": "Layer 2 — Runtime: session-trace.sh subcommands work",
+        "cmd": "bash scripts/session-trace.sh start 'test-task' F11 && bash scripts/session-trace.sh event 'layer1_lint' pass 'ok' && bash scripts/session-trace.sh end pass 'test complete' && bash scripts/session-trace.sh show 1 | grep -q 'test-task'",
+        "repair": "Run each subcommand manually and check the output. Ensure .harness/traces/ directory exists. Verify the JSONL file is being written to .harness/traces/traces.jsonl."
+      },
+      {
+        "label": "Layer 3 — Templates and Makefile targets present",
+        "cmd": "ls templates/sprint-contract.md templates/evaluator-rubric.md && grep -qE '^session-start[[:space:]]*:' Makefile && grep -qE '^session-end[[:space:]]*:' Makefile && grep -q 'sprint contract\\|observabilit\\|session.trace' AGENTS.md",
+        "repair": "Ensure templates/sprint-contract.md and templates/evaluator-rubric.md exist. Add session-start/session-end/session-show targets to Makefile. Add Observability Protocol section to AGENTS.md referencing the sprint contract and rubric."
+      }
+    ],
+    "state": "active",
+    "evidence": "",
+    "notes": "L11: observability inside the harness. jq + date required at runtime for session-trace.sh. Traces are runtime artifacts (gitignored); only .gitkeep tracks the directory."
   }
 ]

@@ -2,7 +2,7 @@
 # Replace each placeholder command with your project's actual command.
 # All targets should exit non-zero on failure.
 
-.PHONY: setup dev test format lint check clean vcr verify-feature check-arch e2e
+.PHONY: setup dev test format lint check clean vcr verify-feature check-arch e2e session-start session-end session-show
 
 ## setup — install dependencies and initialize the environment/database
 setup:
@@ -71,6 +71,23 @@ e2e:
 	#   go test ./e2e/...
 	@echo "Replace this with your e2e command"
 	@exit 1
+
+## session-start — begin a session trace (L11)
+## Usage: make session-start TASK="implement dark mode" FEATURES="F03 F04"
+session-start:
+	@if [ -z "$(TASK)" ]; then echo "Usage: make session-start TASK=\"description\" [FEATURES=\"F01 F02\"]"; exit 1; fi
+	@bash scripts/session-trace.sh start "$(TASK)" $(FEATURES)
+
+## session-end — close the current session trace
+## Usage: make session-end OUTCOME=pass|fail|partial [NOTES="..."]
+session-end:
+	@if [ -z "$(OUTCOME)" ]; then echo "Usage: make session-end OUTCOME=pass|fail|partial [NOTES=\"notes\"]"; exit 1; fi
+	@bash scripts/session-trace.sh end "$(OUTCOME)" "$(NOTES)"
+
+## session-show — display the last N session traces (default 1)
+## Usage: make session-show [N=3]
+session-show:
+	@bash scripts/session-trace.sh show $(or $(N),1)
 
 ## check-arch — run architectural constraint checks from .harness/arch-rules.json (L10)
 ## Every code-review finding that reveals a new agent error category should become a rule here.

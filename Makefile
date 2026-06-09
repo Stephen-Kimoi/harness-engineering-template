@@ -1,4 +1,4 @@
-.PHONY: setup dev test check audit lint vcr verify-feature check-arch e2e
+.PHONY: setup dev test check audit lint vcr verify-feature check-arch e2e session-start session-end session-show
 
 ## setup — verify bash >= 5 and optionally install shellcheck
 setup:
@@ -27,6 +27,23 @@ lint:
 ## audit — run audit.sh against this template repo (must score 100%)
 audit:
 	@bash audit.sh .
+
+## session-start — begin a session trace (L11)
+## Usage: make session-start TASK="implement dark mode" FEATURES="F03 F04"
+session-start:
+	@if [ -z "$(TASK)" ]; then echo "Usage: make session-start TASK=\"description\" [FEATURES=\"F01 F02\"]"; exit 1; fi
+	@bash scripts/session-trace.sh start "$(TASK)" $(FEATURES)
+
+## session-end — close the current session trace
+## Usage: make session-end OUTCOME=pass|fail|partial [NOTES="..."]
+session-end:
+	@if [ -z "$(OUTCOME)" ]; then echo "Usage: make session-end OUTCOME=pass|fail|partial [NOTES=\"notes\"]"; exit 1; fi
+	@bash scripts/session-trace.sh end "$(OUTCOME)" "$(NOTES)"
+
+## session-show — display the last N session traces (default 1)
+## Usage: make session-show [N=3]
+session-show:
+	@bash scripts/session-trace.sh show $(or $(N),1)
 
 ## check-arch — run architectural constraint checks from .harness/arch-rules.json
 check-arch:

@@ -86,6 +86,26 @@ See [`docs/harness-workflow.md`](docs/harness-workflow.md) for:
 
 ---
 
+## Observability Protocol
+
+The harness collects structured signals — don't rely on agent narration alone.
+
+**Before activating a feature:**
+1. Write a sprint contract: `cp templates/sprint-contract.md docs/sprint-YYYYMMDD-FXX.md`
+2. Start session trace: `make session-start TASK="..." FEATURES="FXX"`
+
+**During verification:**
+- Record each layer result: `bash scripts/session-trace.sh event "layer1_lint" pass`
+- Record runtime signals: `bash scripts/session-trace.sh signal app_ready "port 3000"`
+
+**After completing a feature:**
+1. Score against the evaluator rubric (`templates/evaluator-rubric.md`) — every dimension must reach B or above
+2. End session trace: `make session-end OUTCOME=pass`
+
+Traces are written to `.harness/traces/traces.jsonl`. View with `make session-show`.
+
+---
+
 ## Session Protocol
 
 ### Clock-In (before touching any file)
